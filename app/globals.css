@@ -24,3 +24,31 @@ body {
   -webkit-font-smoothing: antialiased;
   font-family: var(--font-sans);
 }
+
+/* Felt-bilde-placeholder-gradienter — byttes ut med ekte foto når tilgjengelig */
+.crag-img-1 {
+  background: linear-gradient(180deg, #b8c4c9 0%, #758991 60%, #4a5c66 100%);
+}
+.crag-img-2 {
+  background: linear-gradient(180deg, #d4c2a0 0%, #9a805a 60%, #6b5234 100%);
+}
+.crag-img-3 {
+  background: linear-gradient(180deg, #a0b0b5 0%, #5c707b 60%, #3d4d58 100%);
+}
+.crag-img-4 {
+  background: linear-gradient(180deg, #c9c2b5 0%, #8a8170 60%, #5e5747 100%);
+}
+.crag-img-5 {
+  background: linear-gradient(180deg, #b0a88e 0%, #7c7660 60%, #4d483a 100%);
+}
+.crag-img-6 {
+  background: linear-gradient(180deg, #c4a88a 0%, #8f6f4f 60%, #5c4530 100%);
+}
+
+/* Skjuler scrollbar i horisontale strøk */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

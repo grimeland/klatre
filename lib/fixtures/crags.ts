@@ -1,0 +1,132 @@
+import type { Crag } from "@/types/crag";
+
+export const fixtureCrags: Crag[] = [
+  {
+    id: "kolsas",
+    slug: "kolsas",
+    name: "Kolsås",
+    area: "Bærum",
+    distanceMinutes: 22,
+    routeCount: 120,
+    gradeLow: "3",
+    gradeHigh: "7c",
+    climbingTypes: ["sport", "trad"],
+    rockType: "Gneis",
+    exposure: ["S", "V"],
+    approachMinutes: 10,
+    dryness: { kind: "dry", days: 4 },
+    imageId: 1,
+  },
+  {
+    id: "hauktjern",
+    slug: "hauktjern",
+    name: "Hauktjern",
+    area: "Oslo",
+    distanceMinutes: 32,
+    routeCount: 25,
+    gradeLow: "5",
+    gradeHigh: "7a",
+    climbingTypes: ["sport"],
+    rockType: "Gneis",
+    exposure: ["V"],
+    approachMinutes: 5,
+    dryness: { kind: "dry", days: 2 },
+    imageId: 2,
+  },
+  {
+    id: "damtjern",
+    slug: "damtjern",
+    name: "Damtjern",
+    area: "Hadeland",
+    distanceMinutes: 47,
+    routeCount: 38,
+    gradeLow: "4",
+    gradeHigh: "8a",
+    climbingTypes: ["sport"],
+    rockType: "Gneis",
+    exposure: ["S"],
+    approachMinutes: 15,
+    dryness: { kind: "dry", days: 4 },
+    imageId: 3,
+  },
+  {
+    id: "brattefjell",
+    slug: "brattefjell",
+    name: "Brattefjell",
+    area: "Asker",
+    distanceMinutes: 90,
+    routeCount: 45,
+    gradeLow: "4",
+    gradeHigh: "7c",
+    climbingTypes: ["sport"],
+    rockType: "Granitt",
+    exposure: ["Ø"],
+    approachMinutes: 20,
+    dryness: { kind: "rain-yesterday" },
+    imageId: 4,
+  },
+  {
+    id: "sorkedalen",
+    slug: "sorkedalen",
+    name: "Sørkedalen",
+    area: "Oslo",
+    distanceMinutes: 28,
+    routeCount: 90,
+    gradeLow: "4",
+    gradeHigh: "7c",
+    climbingTypes: ["buldring"],
+    rockType: "Gneis",
+    exposure: ["S", "V"],
+    approachMinutes: 8,
+    dryness: { kind: "dry", days: 4 },
+    imageId: 5,
+  },
+  {
+    id: "haegefjell",
+    slug: "haegefjell",
+    name: "Hægefjell",
+    area: "Telemark",
+    distanceMinutes: 130,
+    routeCount: 60,
+    gradeLow: "5",
+    gradeHigh: "8b+",
+    climbingTypes: ["sport"],
+    rockType: "Granitt",
+    exposure: ["S"],
+    approachMinutes: 25,
+    dryness: { kind: "dry-cap" },
+    imageId: 6,
+  },
+  {
+    id: "krokan",
+    slug: "krokan",
+    name: "Krokan",
+    area: "Telemark",
+    distanceMinutes: 110,
+    routeCount: 35,
+    gradeLow: "4",
+    gradeHigh: "7b",
+    climbingTypes: ["sport"],
+    rockType: "Granitt",
+    exposure: ["S", "V"],
+    approachMinutes: 10,
+    dryness: { kind: "dry", days: 6 },
+    imageId: 2,
+  },
+];
+
+export const cragsNearby = fixtureCrags
+  .filter((c) => c.distanceMinutes <= 60)
+  .sort((a, b) => a.distanceMinutes - b.distanceMinutes);
+
+export const cragsThisWeekend = fixtureCrags
+  .filter(
+    (c) =>
+      c.dryness.kind === "dry-cap" ||
+      (c.dryness.kind === "dry" && c.dryness.days >= 3),
+  )
+  .sort((a, b) => a.distanceMinutes - b.distanceMinutes);
+
+export const cragsBouldering = fixtureCrags.filter((c) =>
+  c.climbingTypes.includes("buldring"),
+);
