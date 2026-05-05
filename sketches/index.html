@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klatre — skisse</title>
+<style>
+  :root {
+    --bg: #F6F2EA;
+    --card: #FFFFFF;
+    --ink: #1A1A1A;
+    --ink-2: #4A4A4A;
+    --ink-3: #8A8A8A;
+    --line: #E8E2D5;
+    --primary: #1F3D2B;
+    --primary-ink: #FFFFFF;
+    --pill: #FFFFFF;
+    --sun: #E0A23C;
+    --rain: #6B8A9E;
+    --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #DDD6C8;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 32px 16px 80px;
+  }
+
+  .phone {
+    width: 390px;
+    height: 820px;
+    background: var(--bg);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .phone-label {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #6A6357;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .statusbar {
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  /* ── Forside ─────────────────────────────── */
+
+  .home-hero { padding: 16px 24px 8px; }
+  .home-hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 34px;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    margin-bottom: 4px;
+  }
+  .home-hero p {
+    color: var(--ink-3);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .search-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border-radius: 100px;
+    padding: 14px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    cursor: pointer;
+    border: 1px solid var(--line);
+  }
+  .search-pill .icon { font-size: 16px; }
+  .search-pill .label { font-size: 15px; color: var(--ink-2); }
+
+  .section { padding: 28px 0 8px; }
+  .section h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.005em;
+    padding: 0 24px;
+    margin-bottom: 14px;
+  }
+  .section .sub {
+    font-size: 13px;
+    color: var(--ink-3);
+    padding: 0 24px;
+    margin-top: -10px;
+    margin-bottom: 14px;
+  }
+
+  .h-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 0 24px 4px;
+    scroll-snap-type: x mandatory;
+  }
+  .h-scroll::-webkit-scrollbar { display: none; }
+
+  .card-sm {
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+    background: var(--card);
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .card-sm .img {
+    height: 150px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+  }
+  .card-sm .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 100px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-sm .heart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .card-sm .body { padding: 12px 14px 14px; }
+  .card-sm .title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .card-sm .meta { font-size: 12px; color: var(--ink-3); }
+
+  /* fjell-gradient placeholders */
+  .img-1 { background: linear-gradient(180deg, #B8C4C9 0%, #758991 60%, #4A5C66 100%); }
+  .img-2 { background: linear-gradient(180deg, #D4C2A0 0%, #9A805A 60%, #6B5234 100%); }
+  .img-3 { background: linear-gradient(180deg, #A0B0B5 0%, #5C707B 60%, #3D4D58 100%); }
+  .img-4 { background: linear-gradient(180deg, #C9C2B5 0%, #8A8170 60%, #5E5747 100%); }
+  .img-5 { background: linear-gradient(180deg, #B0A88E 0%, #7C7660 60%, #4D483A 100%); }
+  .img-6 { background: linear-gradient(180deg, #C4A88A 0%, #8F6F4F 60%, #5C4530 100%); }
+
+  /* ── Bottom nav ──────────────────────────── */
+
+  .bnav {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0 28px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .bnav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: var(--ink-3);
+    font-size: 11px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .bnav a.active { color: var(--ink); }
+  .bnav .ic { font-size: 18px; }
+
+  /* ── Toggle Liste/Kart ───────────────────── */
+
+  .view-toggle {
+    position: absolute;
+    bottom: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    border-radius: 100px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  /* ── Resultater ──────────────────────────── */
+
+  .top-search {
+    flex-shrink: 0;
+    padding: 10px 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .top-search .back, .top-search .filter-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .search-pill-sm {
+    flex: 1;
+    background: var(--card);
+    border-radius: 100px;
+    padding: 8px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid var(--line);
+    text-align: center;
+    cursor: pointer;
+  }
+  .search-pill-sm .t { font-size: 14px; font-weight: 600; }
+  .search-pill-sm .s { font-size: 11px; color: var(--ink-3); }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 16px 12px;
+    flex-shrink: 0;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--ink-2);
+  }
+  .chip.on {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+
+  .result-list { padding: 0 16px 100px; }
+  .card-lg {
+    background: var(--card);
+    border-radius: 22px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    cursor: pointer;
+  }
+  .card-lg .img { height: 220px; position: relative; }
+  .card-lg .body { padding: 14px 16px 18px; }
+  .card-lg .row1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .card-lg .name { font-size: 17px; font-weight: 600; }
+  .card-lg .dist { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+  .card-lg .meta { font-size: 13px; color: var(--ink-3); }
+
+  /* ── Kart-view ──────────────────────────── */
+
+  .map-canvas {
+    flex: 1;
+    position: relative;
+    background:
+      radial-gradient(ellipse at 30% 40%, #C5D4C0 0%, transparent 40%),
+      radial-gradient(ellipse at 70% 60%, #B8C9D5 0%, transparent 45%),
+      linear-gradient(135deg, #E5E0D2 0%, #D8D2C0 100%);
+    overflow: hidden;
+  }
+  .map-canvas::before {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: -10%;
+    right: -10%;
+    height: 80px;
+    background: linear-gradient(90deg, transparent, #A8C5D8 20%, #A8C5D8 80%, transparent);
+    transform: rotate(-8deg);
+    opacity: 0.5;
+  }
+  .pin {
+    position: absolute;
+    background: #fff;
+    border-radius: 100px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transform: translate(-50%, -50%);
+  }
+  .pin.selected {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .bottom-sheet {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 130px;
+    background: var(--card);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    cursor: pointer;
+  }
+  .bottom-sheet .img { height: 160px; position: relative; }
+  .bottom-sheet .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .bottom-sheet .body { padding: 12px 16px 16px; }
+  .bottom-sheet .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .bottom-sheet .name { font-size: 16px; font-weight: 600; }
+  .bottom-sheet .dist { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+  .bottom-sheet .meta { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+
+  /* ── Detaljside ──────────────────────────── */
+
+  .detail-hero { height: 320px; position: relative; flex-shrink: 0; }
+  .detail-hero .top-bar {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 2;
+  }
+  .detail-hero .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+  .detail-hero .icons-right { display: flex; gap: 8px; }
+  .detail-hero .counter {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    border-radius: 100px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .detail-body { padding: 22px 24px 24px; }
+  .detail-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: -0.005em;
+    margin-bottom: 6px;
+  }
+  .detail-sub { font-size: 14px; color: var(--ink-2); margin-bottom: 4px; }
+  .detail-meta { font-size: 13px; color: var(--ink-3); margin-bottom: 22px; }
+  .divider { height: 1px; background: var(--line); margin: 22px 0; }
+  .block-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .weather { display: flex; gap: 8px; }
+  .wcell {
+    flex: 1;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .wcell .day { font-size: 11px; color: var(--ink-3); margin-bottom: 4px; }
+  .wcell .ico { font-size: 20px; margin-bottom: 4px; }
+  .wcell .t { font-size: 13px; font-weight: 600; }
+  .wcell .c { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+
+  .dryness {
+    margin-top: 14px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 16px;
+  }
+  .dryness .head {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .dryness .sub {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .dryness .timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .dryness .day-cell {
+    text-align: center;
+    flex: 1;
+  }
+  .dryness .day-cell .d { font-size: 10px; color: var(--ink-3); margin-bottom: 4px; }
+  .dryness .day-cell .e { font-size: 16px; }
+
+  .info-line {
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+    display: flex;
+    gap: 10px;
+  }
+  .info-line .lbl { color: var(--ink-3); width: 92px; flex-shrink: 0; }
+
+  .grade-bar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .grade-bar .g {
+    flex: 1;
+    height: 8px;
+    background: var(--line);
+    border-radius: 4px;
+  }
+  .grade-bar .g.on { background: var(--primary); }
+
+  .sticky-cta {
+    flex-shrink: 0;
+    padding: 12px 20px 28px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    border-radius: 100px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* ── Bilde-galleri (hero) ────────────────── */
+
+  .gallery-hero {
+    height: 340px;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .gallery-scroll {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .gallery-scroll::-webkit-scrollbar { display: none; }
+  .gallery-img {
+    flex: 0 0 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    background-size: cover;
+    background-position: center;
+  }
+  .gallery-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 2;
+  }
+  .gallery-top .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    font-size: 16px;
+  }
+  .gallery-top .icons-right { display: flex; gap: 8px; }
+  .gallery-dots {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+  }
+  .gallery-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+  }
+  .gallery-dots .dot.on { background: #fff; width: 7px; height: 7px; }
+
+  /* ── Populære ruter ──────────────────────── */
+
+  .routes-h-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    margin: 0 -24px;
+    padding: 0 24px 4px;
+    scroll-snap-type: x mandatory;
+  }
+  .routes-h-scroll::-webkit-scrollbar { display: none; }
+  .route-card {
+    flex: 0 0 190px;
+    scroll-snap-align: start;
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .route-card .img {
+    height: 130px;
+    position: relative;
+  }
+  .route-card .img .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 100px;
+    padding: 4px 9px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .route-card .body { padding: 12px 14px 14px; }
+  .route-card .stars {
+    color: #D89A2E;
+    font-size: 11px;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+  .route-card .name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .route-card .meta {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .route-card .ticks {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* ── Alle ruter (segmented + liste) ──────── */
+
+  .segmented {
+    display: flex;
+    background: var(--card);
+    border-radius: 100px;
+    padding: 4px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    gap: 2px;
+  }
+  .segmented .seg {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    cursor: pointer;
+    border-radius: 100px;
+  }
+  .segmented .seg.on {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .route-list {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 4px 14px;
+    margin-bottom: 8px;
+  }
+  .route-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .route-row:last-child { border-bottom: 0; }
+  .route-row .stars-col {
+    width: 32px;
+    font-size: 11px;
+    color: #D89A2E;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+  }
+  .route-row .text {
+    flex: 1;
+    min-width: 0;
+  }
+  .route-row .name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .route-row .name .tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+  }
+  .route-row .meta {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .grade-badge {
+    flex-shrink: 0;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 6px 11px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    letter-spacing: 0.02em;
+  }
+  .route-list-more {
+    text-align: center;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    background: var(--card);
+    margin-top: 8px;
+  }
+
+  /* ── Filterside (modal) ──────────────────── */
+
+  .filter-header {
+    flex-shrink: 0;
+    padding: 14px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .filter-header .ttl {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .filter-header .close {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .filter-body { padding: 8px 20px 24px; }
+  .filter-section { padding: 22px 0 6px; }
+  .filter-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .recommend-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px 4px;
+  }
+  .recommend-row::-webkit-scrollbar { display: none; }
+  .rec-card {
+    flex: 0 0 110px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 10px 12px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--card);
+  }
+  .rec-card.on {
+    border-color: var(--ink);
+    border-width: 2px;
+    padding: 13px 9px 11px;
+  }
+  .rec-card .ic { font-size: 24px; margin-bottom: 8px; display: block; }
+  .rec-card .lbl { font-size: 12px; line-height: 1.25; color: var(--ink); }
+
+  .chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip-grid .chip {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--ink-2);
+  }
+  .chip-grid .chip.on {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+
+  /* slider */
+  .slider {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 18px 14px;
+  }
+  .slider .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+  .slider .row b { color: var(--ink); font-weight: 600; }
+  .slider .track {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    position: relative;
+    margin: 18px 0 8px;
+  }
+  .slider .fill {
+    position: absolute;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  .slider .knob {
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--primary);
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+
+  .filter-footer {
+    flex-shrink: 0;
+    padding: 14px 20px 28px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .filter-footer .clear {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 12px 4px;
+  }
+  .filter-footer .show {
+    background: var(--ink);
+    color: #fff;
+    border: 0;
+    border-radius: 100px;
+    padding: 14px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .screen { display: none; flex: 1; flex-direction: column; min-height: 0; }
+  .screen.on { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- ────────────────────────────────────────────────
+     Skjerm 1 — Forside (Utforsk)
+     ──────────────────────────────────────────────── -->
+<div class="phone">
+  <div class="phone-label">1 · Utforsk</div>
+  <div class="statusbar"><span>9:41</span><span>●●●  ●  ●</span></div>
+
+  <div class="screen on">
+    <div class="scroll">
+
+      <div class="home-hero">
+        <h1>Klatre i Norge</h1>
+        <p>Fra Oslo · Sør-Norge</p>
+        <div class="search-pill">
+          <span class="icon">⌕</span>
+          <span class="label">Hvor vil du klatre?</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Nær deg</h2>
+        <div class="sub">Sortert etter avstand</div>
+        <div class="h-scroll">
+          <div class="card-sm">
+            <div class="img img-1">
+              <span class="badge">☀ Tørt i 4 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Kolsås</div>
+              <div class="meta">22 min · 120 ruter · 3–7c</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-2">
+              <span class="badge">☀ Tørt i 2 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Hauktjern</div>
+              <div class="meta">32 min · 25 ruter · 5–7a</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-3">
+              <span class="badge">☀ Tørt i 4 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Damtjern</div>
+              <div class="meta">47 min · 38 ruter · 4–8a</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-4">
+              <span class="badge">🌧 Regn i går</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Brattefjell</div>
+              <div class="meta">1 t 30 · 45 ruter · 4–7c</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Bra vær i helgen</h2>
+        <div class="sub">Lørdag–søndag · innenfor 3 timer</div>
+        <div class="h-scroll">
+          <div class="card-sm">
+            <div class="img img-5">
+              <span class="badge">☀ Tørt i minst en uke</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Hægefjell</div>
+              <div class="meta">2 t 10 · 60 ruter · 5–8b+</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-6">
+              <span class="badge">☀ Tørt i 6 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Berdalsberget</div>
+              <div class="meta">2 t 40 · 80 ruter · 5–8a</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-2">
+              <span class="badge">☀ Tørt i 3 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Krokan</div>
+              <div class="meta">1 t 50 · 35 ruter · 4–7b</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Buldring i nærheten</h2>
+        <div class="h-scroll">
+          <div class="card-sm">
+            <div class="img img-1">
+              <span class="badge">☀ Tørt i 4 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Sørkedalen</div>
+              <div class="meta">28 min · 90 problemer</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="img img-3">
+              <span class="badge">☀ Tørt i 5 dager</span>
+              <span class="heart">♡</span>
+            </div>
+            <div class="body">
+              <div class="title">Nittedal</div>
+              <div class="meta">42 min · 60 problemer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 24px;"></div>
+    </div>
+
+    <div class="bnav">
+      <a class="active"><span class="ic">⌂</span><span>Utforsk</span></a>
+      <a><span class="ic">♡</span><span>Lagret</span></a>
+      <a><span class="ic">○</span><span>Profil</span></a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ────────────────────────────────────────────────
+     Skjerm 2 — Resultatliste
+     ──────────────────────────────────────────────── -->
+<div class="phone">
+  <div class="phone-label">2 · Resultater (liste)</div>
+  <div class="statusbar"><span>9:41</span><span>●●●  ●  ●</span></div>
+
+  <div class="top-search">
+    <div class="back">←</div>
+    <div class="search-pill-sm">
+      <div class="t">Klatre nær Oslo</div>
+      <div class="s">Sport · sortert etter avstand</div>
+    </div>
+    <div class="filter-btn">⇅</div>
+  </div>
+
+  <div class="filter-row">
+    <div class="chip on">Sport</div>
+    <div class="chip">Trad</div>
+    <div class="chip">Buldring</div>
+    <div class="chip">Tørt 3+ dager</div>
+    <div class="chip">Grad ▾</div>
+    <div class="chip">Filter</div>
+  </div>
+
+  <div class="scroll">
+    <div class="result-list">
+
+      <div class="card-lg">
+        <div class="img img-1">
+          <span class="badge">☀ Tørt i 4 dager</span>
+          <span class="heart">♡</span>
+        </div>
+        <div class="body">
+          <div class="row1">
+            <div class="name">Kolsås</div>
+            <div class="dist">22 min</div>
+          </div>
+          <div class="meta">120 ruter · 3–7c · Sport + Trad</div>
+        </div>
+      </div>
+
+      <div class="card-lg">
+        <div class="img img-2">
+          <span class="badge">☀ Tørt i 2 dager</span>
+          <span class="heart">♡</span>
+        </div>
+        <div class="body">
+          <div class="row1">
+            <div class="name">Hauktjern</div>
+            <div class="dist">32 min</div>
+          </div>
+          <div class="meta">25 ruter · 5–7a · Sport</div>
+        </div>
+      </div>
+
+      <div class="card-lg">
+        <div class="img img-3">
+          <span class="badge">☀ Tørt i 4 dager</span>
+          <span class="heart">♡</span>
+        </div>
+        <div class="body">
+          <div class="row1">
+            <div class="name">Damtjern</div>
+            <div class="dist">47 min</div>
+          </div>
+          <div class="meta">38 ruter · 4–8a · Sport · sør-vendt</div>
+        </div>
+      </div>
+
+      <div class="card-lg">
+        <div class="img img-5">
+          <span class="badge">☀ Tørt i minst en uke</span>
+          <span class="heart">♡</span>
+        </div>
+        <div class="body">
+          <div class="row1">
+            <div class="name">Hægefjell</div>
+            <div class="dist">2 t 10</div>
+          </div>
+          <div class="meta">60 ruter · 5–8b+ · Sport</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="view-toggle">🗺  Vis kart</div>
+
+  <div class="bnav">
+    <a class="active"><span class="ic">⌂</span><span>Utforsk</span></a>
+    <a><span class="ic">♡</span><span>Lagret</span></a>
+    <a><span class="ic">○</span><span>Profil</span></a>
+  </div>
+</div>
+
+
+<!-- ────────────────────────────────────────────────
+     Skjerm 3 — Kart-view
+     ──────────────────────────────────────────────── -->
+<div class="phone">
+  <div class="phone-label">3 · Resultater (kart)</div>
+  <div class="statusbar"><span>9:41</span><span>●●●  ●  ●</span></div>
+
+  <div class="top-search">
+    <div class="back">←</div>
+    <div class="search-pill-sm">
+      <div class="t">Klatre nær Oslo</div>
+      <div class="s">Sport · 4 felt</div>
+    </div>
+    <div class="filter-btn">⇅</div>
+  </div>
+
+  <div class="map-canvas">
+    <div class="pin" style="top: 38%; left: 30%;">☀ 22 min</div>
+    <div class="pin" style="top: 28%; left: 58%;">☀ 32 min</div>
+    <div class="pin selected" style="top: 50%; left: 45%;">☀ 47 min</div>
+    <div class="pin" style="top: 70%; left: 65%;">🌧 1 t 30</div>
+
+    <div class="bottom-sheet">
+      <div class="img img-3">
+        <span class="badge">☀ Tørt i 4 dager</span>
+        <span class="close">✕</span>
+      </div>
+      <div class="body">
+        <div class="row">
+          <div class="name">Damtjern</div>
+          <div class="dist">47 min</div>
+        </div>
+        <div class="meta">38 ruter · 4–8a · Sport · sør-vendt</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-toggle">📋  Vis liste</div>
+
+  <div class="bnav">
+    <a class="active"><span class="ic">⌂</span><span>Utforsk</span></a>
+    <a><span class="ic">♡</span><span>Lagret</span></a>
+    <a><span class="ic">○</span><span>Profil</span></a>
+  </div>
+</div>
+
+
+<!-- ────────────────────────────────────────────────
+     Skjerm 4 — Detaljside
+     ──────────────────────────────────────────────── -->
+<div class="phone">
+  <div class="phone-label">4 · Felt-detaljer</div>
+  <div class="statusbar"><span>9:41</span><span>●●●  ●  ●</span></div>
+
+  <div class="gallery-hero">
+    <div class="gallery-scroll">
+      <div class="gallery-img img-3"></div>
+      <div class="gallery-img img-1"></div>
+      <div class="gallery-img img-5"></div>
+      <div class="gallery-img img-2"></div>
+      <div class="gallery-img img-4"></div>
+      <div class="gallery-img img-6"></div>
+    </div>
+    <div class="gallery-top">
+      <div class="icon-btn">←</div>
+      <div class="icons-right">
+        <div class="icon-btn">↗</div>
+        <div class="icon-btn">♡</div>
+      </div>
+    </div>
+    <div class="gallery-dots">
+      <span class="dot on"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="detail-body">
+      <div class="detail-title">Damtjern</div>
+      <div class="detail-sub">Hadeland · 47 min fra deg</div>
+      <div class="detail-meta">Sport · 38 ruter · 4–8a · Gneis</div>
+
+      <div class="dryness">
+        <div class="head">☀ Tørt i 4 dager</div>
+        <div class="sub">Sist regn: tirsdag</div>
+        <div class="timeline">
+          <div class="day-cell"><div class="d">Tir</div><div class="e">🌧</div></div>
+          <div class="day-cell"><div class="d">Ons</div><div class="e">☀</div></div>
+          <div class="day-cell"><div class="d">Tor</div><div class="e">☀</div></div>
+          <div class="day-cell"><div class="d">Fre</div><div class="e">☀</div></div>
+          <div class="day-cell"><div class="d">Lør</div><div class="e">☀</div></div>
+          <div class="day-cell"><div class="d">Søn</div><div class="e">☀</div></div>
+          <div class="day-cell"><div class="d">I dag</div><div class="e">☀</div></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Vær neste 3 dager</div>
+      <div class="weather">
+        <div class="wcell"><div class="day">I morgen</div><div class="ico">☀</div><div class="t">18°</div><div class="c">Tørt</div></div>
+        <div class="wcell"><div class="day">Tirsdag</div><div class="ico">☀</div><div class="t">16°</div><div class="c">Tørt</div></div>
+        <div class="wcell"><div class="day">Onsdag</div><div class="ico">🌧</div><div class="t">12°</div><div class="c">Vått</div></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Populære ruter</div>
+      <div class="routes-h-scroll">
+
+        <div class="route-card">
+          <div class="img img-3">
+            <span class="badge">★ KLASSIKER</span>
+          </div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <div class="name">Sjøveien</div>
+            <div class="meta">6a · 28 m · Sport</div>
+            <div class="ticks">240 har klatret</div>
+          </div>
+        </div>
+
+        <div class="route-card">
+          <div class="img img-5">
+            <span class="badge">★ KLASSIKER</span>
+          </div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <div class="name">Kantete stillhet</div>
+            <div class="meta">7a · 30 m · Sport</div>
+            <div class="ticks">95 har klatret</div>
+          </div>
+        </div>
+
+        <div class="route-card">
+          <div class="img img-1">
+          </div>
+          <div class="body">
+            <div class="stars">★★</div>
+            <div class="name">Solstreif</div>
+            <div class="meta">5+ · 25 m · Sport</div>
+            <div class="ticks">180 har klatret</div>
+          </div>
+        </div>
+
+        <div class="route-card">
+          <div class="img img-6">
+          </div>
+          <div class="body">
+            <div class="stars">★★</div>
+            <div class="name">Edderkoppen</div>
+            <div class="meta">6c · 32 m · Sport</div>
+            <div class="ticks">87 har klatret</div>
+          </div>
+        </div>
+
+        <div class="route-card">
+          <div class="img img-2">
+          </div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <div class="name">Skyggespillet</div>
+            <div class="meta">8a · 28 m · Prosjekt</div>
+            <div class="ticks">12 har klatret</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Alle ruter (38)</div>
+      <div class="segmented">
+        <div class="seg on">Alle</div>
+        <div class="seg">4–5</div>
+        <div class="seg">6</div>
+        <div class="seg">7</div>
+        <div class="seg">8a+</div>
+      </div>
+
+      <div class="route-list">
+        <div class="route-row">
+          <div class="stars-col">★★</div>
+          <div class="text">
+            <div class="name">Førstemann ned</div>
+            <div class="meta">22 m · Sport · 320 sendinger</div>
+          </div>
+          <div class="grade-badge">5</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★</div>
+          <div class="text">
+            <div class="name">Solstreif</div>
+            <div class="meta">25 m · Sport · 180 sendinger</div>
+          </div>
+          <div class="grade-badge">5+</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★★</div>
+          <div class="text">
+            <div class="name">Sjøveien <span class="tag">KLASSIKER</span></div>
+            <div class="meta">28 m · Sport · 240 sendinger</div>
+          </div>
+          <div class="grade-badge">6a</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★</div>
+          <div class="text">
+            <div class="name">Krokfingern</div>
+            <div class="meta">24 m · Sport · 92 sendinger</div>
+          </div>
+          <div class="grade-badge">6a+</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★</div>
+          <div class="text">
+            <div class="name">Edderkoppen</div>
+            <div class="meta">32 m · Sport · 87 sendinger</div>
+          </div>
+          <div class="grade-badge">6c</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★★</div>
+          <div class="text">
+            <div class="name">Kantete stillhet <span class="tag">KLASSIKER</span></div>
+            <div class="meta">30 m · Sport · 95 sendinger</div>
+          </div>
+          <div class="grade-badge">7a</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★</div>
+          <div class="text">
+            <div class="name">Nedstigningen</div>
+            <div class="meta">28 m · Sport · 41 sendinger</div>
+          </div>
+          <div class="grade-badge">7b</div>
+        </div>
+        <div class="route-row">
+          <div class="stars-col">★★★</div>
+          <div class="text">
+            <div class="name">Skyggespillet</div>
+            <div class="meta">28 m · Prosjekt · 12 sendinger</div>
+          </div>
+          <div class="grade-badge">8a</div>
+        </div>
+      </div>
+
+      <button class="route-list-more">Vis alle 38 ruter</button>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Komme dit</div>
+      <div class="info-line"><span class="lbl">Parkering</span><span>Damtjernvegen, plass til 8 biler</span></div>
+      <div class="info-line"><span class="lbl">Innsteg</span><span>15 min, lett sti</span></div>
+      <div class="info-line"><span class="lbl">Eksposisjon</span><span>Sør-vendt, sol fra kl. 11</span></div>
+      <div class="info-line"><span class="lbl">Bergart</span><span>Gneis</span></div>
+      <div class="info-line"><span class="lbl">Sesong</span><span>Mai – oktober</span></div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Praktisk</div>
+      <div class="info-line"><span class="lbl">Tilgang</span><span>Fri ferdsel, ingen avgift</span></div>
+      <div class="info-line"><span class="lbl">Mobildekning</span><span>God</span></div>
+      <div class="info-line"><span class="lbl">Lokal klubb</span><span>Hadeland Klatreklubb</span></div>
+
+      <div style="height: 16px;"></div>
+    </div>
+  </div>
+
+  <div class="sticky-cta">
+    <button class="btn-primary">Åpne i Kart  ↗</button>
+  </div>
+</div>
+
+
+<!-- ────────────────────────────────────────────────
+     Skjerm 5 — Filtre (modal)
+     ──────────────────────────────────────────────── -->
+<div class="phone">
+  <div class="phone-label">5 · Filtre</div>
+  <div class="statusbar"><span>9:41</span><span>●●●  ●  ●</span></div>
+
+  <div class="filter-header">
+    <div class="ttl">Filtre</div>
+    <div class="close">✕</div>
+  </div>
+
+  <div class="scroll">
+    <div class="filter-body">
+
+      <div class="filter-section">
+        <h3>Anbefalt for deg</h3>
+        <div class="recommend-row">
+          <div class="rec-card on">
+            <span class="ic">☀</span>
+            <div class="lbl">Tørt nå</div>
+          </div>
+          <div class="rec-card">
+            <span class="ic">🥾</span>
+            <div class="lbl">Lett innsteg</div>
+          </div>
+          <div class="rec-card">
+            <span class="ic">👨‍👩‍👧</span>
+            <div class="lbl">Familievennlig</div>
+          </div>
+          <div class="rec-card">
+            <span class="ic">🌅</span>
+            <div class="lbl">Sør-vendt</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Type klatring</h3>
+        <div class="chip-grid">
+          <div class="chip on">Sport</div>
+          <div class="chip">Trad</div>
+          <div class="chip">Buldring</div>
+          <div class="chip">Multipitch</div>
+          <div class="chip">Is</div>
+          <div class="chip">Alpin</div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Avstand fra deg</h3>
+        <div class="slider">
+          <div class="row"><span>Maks reisetid</span><b>0 – 3 timer</b></div>
+          <div class="track">
+            <div class="fill" style="left: 0; width: 38%;"></div>
+            <div class="knob" style="left: 0;"></div>
+            <div class="knob" style="left: 38%;"></div>
+          </div>
+          <div class="row" style="margin-bottom: 0; margin-top: 4px;">
+            <span>0 t</span><span>8 t</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Vanskelighet</h3>
+        <div class="slider">
+          <div class="row"><span>Klatregrad</span><b>5 – 7a</b></div>
+          <div class="track">
+            <div class="fill" style="left: 18%; width: 42%;"></div>
+            <div class="knob" style="left: 18%;"></div>
+            <div class="knob" style="left: 60%;"></div>
+          </div>
+          <div class="row" style="margin-bottom: 0; margin-top: 4px;">
+            <span>3</span><span>9a</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Forhold</h3>
+        <div class="chip-grid">
+          <div class="chip">Tørt nå</div>
+          <div class="chip on">Tørt 3+ dager</div>
+          <div class="chip">Tørt minst en uke</div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Eksposisjon</h3>
+        <div class="chip-grid">
+          <div class="chip on">Sør</div>
+          <div class="chip">Vest</div>
+          <div class="chip">Øst</div>
+          <div class="chip">Nord</div>
+          <div class="chip">Skygge mulig</div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Bergart</h3>
+        <div class="chip-grid">
+          <div class="chip">Granitt</div>
+          <div class="chip">Gneis</div>
+          <div class="chip">Sandstein</div>
+          <div class="chip">Kalkstein</div>
+          <div class="chip">Konglomerat</div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Mer</h3>
+        <div class="chip-grid">
+          <div class="chip">Innsteg under 15 min</div>
+          <div class="chip on">Familievennlig</div>
+          <div class="chip">Parkering ved feltet</div>
+          <div class="chip">Bolt</div>
+          <div class="chip">Mobildekning</div>
+        </div>
+      </div>
+
+      <div style="height: 16px;"></div>
+    </div>
+  </div>
+
+  <div class="filter-footer">
+    <button class="clear">Tøm alle</button>
+    <button class="show">Vis 24 felt</button>
+  </div>
+</div>
+
+</body>
+</html>
