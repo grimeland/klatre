@@ -1,4 +1,55 @@
-import type { Crag } from "@/types/crag";
+import type { Crag, Route } from "@/types/crag";
+
+const damtjernRoutes: Route[] = [
+  { id: "d-1", name: "Førstemann ned", grade: "5", gradeNumeric: 10, lengthM: 22, stars: 2, type: "sport", ascents: 320, isClassic: false },
+  { id: "d-2", name: "Solstreif", grade: "5+", gradeNumeric: 12, lengthM: 25, stars: 2, type: "sport", ascents: 180, isClassic: false },
+  { id: "d-3", name: "Sjøveien", grade: "6a", gradeNumeric: 14, lengthM: 28, stars: 3, type: "sport", ascents: 240, isClassic: true },
+  { id: "d-4", name: "Krokfingern", grade: "6a+", gradeNumeric: 15, lengthM: 24, stars: 1, type: "sport", ascents: 92, isClassic: false },
+  { id: "d-5", name: "Edderkoppen", grade: "6c", gradeNumeric: 17, lengthM: 32, stars: 2, type: "sport", ascents: 87, isClassic: false },
+  { id: "d-6", name: "Kantete stillhet", grade: "7a", gradeNumeric: 18, lengthM: 30, stars: 3, type: "sport", ascents: 95, isClassic: true },
+  { id: "d-7", name: "Nedstigningen", grade: "7b", gradeNumeric: 20, lengthM: 28, stars: 2, type: "sport", ascents: 41, isClassic: false },
+  { id: "d-8", name: "Skyggespillet", grade: "8a", gradeNumeric: 22, lengthM: 28, stars: 3, type: "sport", ascents: 12, isClassic: false },
+];
+
+const kolsasRoutes: Route[] = [
+  { id: "k-1", name: "Sjuende himmel", grade: "5", gradeNumeric: 10, lengthM: 18, stars: 2, type: "sport", ascents: 540, isClassic: false },
+  { id: "k-2", name: "Kongekanten", grade: "6a", gradeNumeric: 14, lengthM: 22, stars: 3, type: "sport", ascents: 320, isClassic: true },
+  { id: "k-3", name: "Den lange linja", grade: "6b", gradeNumeric: 16, lengthM: 28, stars: 2, type: "trad", ascents: 88, isClassic: false },
+  { id: "k-4", name: "Steinhugger", grade: "7a", gradeNumeric: 18, lengthM: 24, stars: 2, type: "sport", ascents: 105, isClassic: false },
+  { id: "k-5", name: "Klippekant", grade: "7b+", gradeNumeric: 21, lengthM: 26, stars: 3, type: "sport", ascents: 38, isClassic: true },
+];
+
+const hauktjernRoutes: Route[] = [
+  { id: "h-1", name: "Vestpilaren", grade: "5", gradeNumeric: 10, lengthM: 18, stars: 2, type: "sport", ascents: 210, isClassic: false },
+  { id: "h-2", name: "Sortie", grade: "6a", gradeNumeric: 14, lengthM: 20, stars: 2, type: "sport", ascents: 145, isClassic: false },
+  { id: "h-3", name: "Kveldssol", grade: "6b+", gradeNumeric: 17, lengthM: 22, stars: 3, type: "sport", ascents: 67, isClassic: true },
+];
+
+const generic3Day = [
+  { dayLabel: "I morgen", icon: "☀", tempC: 18, label: "Tørt" },
+  { dayLabel: "Tirsdag", icon: "☀", tempC: 16, label: "Tørt" },
+  { dayLabel: "Onsdag", icon: "🌧", tempC: 12, label: "Vått" },
+];
+
+const dryTimeline = [
+  { dayLabel: "Tir", icon: "🌧" },
+  { dayLabel: "Ons", icon: "☀" },
+  { dayLabel: "Tor", icon: "☀" },
+  { dayLabel: "Fre", icon: "☀" },
+  { dayLabel: "Lør", icon: "☀" },
+  { dayLabel: "Søn", icon: "☀" },
+  { dayLabel: "I dag", icon: "☀" },
+];
+
+const wetTimeline = [
+  { dayLabel: "Tir", icon: "☀" },
+  { dayLabel: "Ons", icon: "☀" },
+  { dayLabel: "Tor", icon: "☀" },
+  { dayLabel: "Fre", icon: "☀" },
+  { dayLabel: "Lør", icon: "☀" },
+  { dayLabel: "Søn", icon: "🌧" },
+  { dayLabel: "I dag", icon: "🌤" },
+];
 
 export const fixtureCrags: Crag[] = [
   {
@@ -14,8 +65,19 @@ export const fixtureCrags: Crag[] = [
     rockType: "Gneis",
     exposure: ["S", "V"],
     approachMinutes: 10,
+    parkingNote: "Kolsåstoppen P-plass, plass til 25 biler",
+    approachNote: "10 min, lett sti opp fra parkeringen",
+    exposureNote: "Sør- og vestvendt, sol fra kl. 10",
+    seasonNote: "April – november",
+    accessNote: "Fri ferdsel, ingen avgift",
+    localClub: "Bærum Klatreklubb",
     dryness: { kind: "dry", days: 4 },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: dryTimeline,
+    routes: kolsasRoutes,
+    location: { lat: 59.9168, lng: 10.5375 },
     imageId: 1,
+    galleryImageIds: [1, 3, 5, 2, 4, 6],
   },
   {
     id: "hauktjern",
@@ -30,8 +92,19 @@ export const fixtureCrags: Crag[] = [
     rockType: "Gneis",
     exposure: ["V"],
     approachMinutes: 5,
+    parkingNote: "Hauktjern P, plass til 12 biler",
+    approachNote: "5 min, sti fra parkeringen",
+    exposureNote: "Vestvendt, sol etter lunsj",
+    seasonNote: "Mai – oktober",
+    accessNote: "Fri ferdsel, ingen avgift",
+    localClub: "Oslo Klatreklubb",
     dryness: { kind: "dry", days: 2 },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: dryTimeline,
+    routes: hauktjernRoutes,
+    location: { lat: 59.8631, lng: 10.7833 },
     imageId: 2,
+    galleryImageIds: [2, 4, 1, 5],
   },
   {
     id: "damtjern",
@@ -46,8 +119,19 @@ export const fixtureCrags: Crag[] = [
     rockType: "Gneis",
     exposure: ["S"],
     approachMinutes: 15,
+    parkingNote: "Damtjernvegen, plass til 8 biler",
+    approachNote: "15 min, lett sti",
+    exposureNote: "Sør-vendt, sol fra kl. 11",
+    seasonNote: "Mai – oktober",
+    accessNote: "Fri ferdsel, ingen avgift",
+    localClub: "Hadeland Klatreklubb",
     dryness: { kind: "dry", days: 4 },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: dryTimeline,
+    routes: damtjernRoutes,
+    location: { lat: 60.2543, lng: 10.5821 },
     imageId: 3,
+    galleryImageIds: [3, 1, 5, 2, 4, 6],
   },
   {
     id: "brattefjell",
@@ -62,8 +146,23 @@ export const fixtureCrags: Crag[] = [
     rockType: "Granitt",
     exposure: ["Ø"],
     approachMinutes: 20,
+    parkingNote: "Brattefjell-vegen, ca 6 plasser",
+    approachNote: "20 min, bratt sti",
+    exposureNote: "Østvendt, morgensol",
+    seasonNote: "April – november",
+    accessNote: "Fri ferdsel",
+    localClub: "Asker Klatreklubb",
     dryness: { kind: "rain-yesterday" },
+    weatherNext3Days: [
+      { dayLabel: "I morgen", icon: "🌤", tempC: 13, label: "Skiftende" },
+      { dayLabel: "Tirsdag", icon: "☀", tempC: 14, label: "Tørt" },
+      { dayLabel: "Onsdag", icon: "☀", tempC: 15, label: "Tørt" },
+    ],
+    drynessTimeline: wetTimeline,
+    routes: [],
+    location: { lat: 59.825, lng: 10.51 },
     imageId: 4,
+    galleryImageIds: [4, 2, 6],
   },
   {
     id: "sorkedalen",
@@ -78,8 +177,19 @@ export const fixtureCrags: Crag[] = [
     rockType: "Gneis",
     exposure: ["S", "V"],
     approachMinutes: 8,
+    parkingNote: "Sørkedalen P, plass til 15 biler",
+    approachNote: "8 min fra parkering",
+    exposureNote: "Varierte blokker — sol og skygge",
+    seasonNote: "April – oktober",
+    accessNote: "Fri ferdsel",
+    localClub: "Oslo Klatreklubb",
     dryness: { kind: "dry", days: 4 },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: dryTimeline,
+    routes: [],
+    location: { lat: 59.9745, lng: 10.6263 },
     imageId: 5,
+    galleryImageIds: [5, 1, 3],
   },
   {
     id: "haegefjell",
@@ -94,8 +204,27 @@ export const fixtureCrags: Crag[] = [
     rockType: "Granitt",
     exposure: ["S"],
     approachMinutes: 25,
+    parkingNote: "Hægefjell P, plass til 10 biler",
+    approachNote: "25 min, slak sti",
+    exposureNote: "Sør-vendt, hele dagens sol",
+    seasonNote: "Mai – september",
+    accessNote: "Fri ferdsel",
+    localClub: "Telemark Klatreklubb",
     dryness: { kind: "dry-cap" },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: [
+      { dayLabel: "Tir", icon: "☀" },
+      { dayLabel: "Ons", icon: "☀" },
+      { dayLabel: "Tor", icon: "☀" },
+      { dayLabel: "Fre", icon: "☀" },
+      { dayLabel: "Lør", icon: "☀" },
+      { dayLabel: "Søn", icon: "☀" },
+      { dayLabel: "I dag", icon: "☀" },
+    ],
+    routes: [],
+    location: { lat: 58.9842, lng: 8.5167 },
     imageId: 6,
+    galleryImageIds: [6, 2, 4, 1],
   },
   {
     id: "krokan",
@@ -110,8 +239,19 @@ export const fixtureCrags: Crag[] = [
     rockType: "Granitt",
     exposure: ["S", "V"],
     approachMinutes: 10,
+    parkingNote: "Krokan P, plass til 8 biler",
+    approachNote: "10 min, lett",
+    exposureNote: "Sør- og vestvendt",
+    seasonNote: "Mai – oktober",
+    accessNote: "Fri ferdsel",
+    localClub: "Telemark Klatreklubb",
     dryness: { kind: "dry", days: 6 },
+    weatherNext3Days: generic3Day,
+    drynessTimeline: dryTimeline,
+    routes: [],
+    location: { lat: 59.4456, lng: 8.5103 },
     imageId: 2,
+    galleryImageIds: [2, 6, 4],
   },
 ];
 
@@ -130,3 +270,7 @@ export const cragsThisWeekend = fixtureCrags
 export const cragsBouldering = fixtureCrags.filter((c) =>
   c.climbingTypes.includes("buldring"),
 );
+
+export function getCragBySlug(slug: string): Crag | undefined {
+  return fixtureCrags.find((c) => c.slug === slug);
+}

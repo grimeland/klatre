@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type Item = { href: string; label: string; icon: string };
 
@@ -8,14 +11,21 @@ const items: Item[] = [
   { href: "/profil", label: "Profil", icon: "○" },
 ];
 
-export function BottomNav({ active = "/" }: { active?: string }) {
+export function BottomNav() {
+  const pathname = usePathname();
+  const hidden = pathname?.startsWith("/felt/");
+  if (hidden) return null;
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-30 flex justify-around bg-bg pt-2.5 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.875rem)" }}
     >
       {items.map((item) => {
-        const isActive = active === item.href;
+        const isActive =
+          item.href === "/"
+            ? pathname === "/"
+            : pathname?.startsWith(item.href);
         return (
           <Link
             key={item.href}
