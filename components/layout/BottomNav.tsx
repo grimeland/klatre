@@ -11,7 +11,7 @@ const items: Item[] = [
 export function BottomNav({ active = "/" }: { active?: string }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 flex justify-around bg-bg pt-2.5"
+      className="fixed bottom-0 left-0 right-0 z-30 flex justify-around bg-bg pt-2.5 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.875rem)" }}
     >
       {items.map((item) => {

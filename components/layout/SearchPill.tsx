@@ -6,7 +6,7 @@ export function SearchPill({
   return (
     <button
       type="button"
-      className="mt-5 flex w-full items-center gap-3 rounded-full border border-line bg-card px-5 py-3.5 text-left shadow-sm transition active:scale-[0.99]"
+      className="mt-5 flex w-full items-center gap-3 rounded-full border border-line bg-card px-5 py-3.5 text-left shadow-sm transition active:scale-[0.99] md:mt-8 md:max-w-xl md:py-4 md:text-base"
     >
       <span aria-hidden className="text-base">
         ⌕

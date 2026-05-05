@@ -37,7 +37,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${ebGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-bg text-ink">
-        <div className="mx-auto flex min-h-screen max-w-[480px] flex-col pb-24">
+        <div className="mx-auto flex min-h-screen max-w-[480px] flex-col pb-24 md:max-w-[1200px] md:pb-16">
           {children}
         </div>
         <BottomNav />

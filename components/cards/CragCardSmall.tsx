@@ -14,10 +14,10 @@ export function CragCardSmall({ crag }: { crag: Crag }) {
   return (
     <Link
       href={`/felt/${crag.slug}`}
-      className="block w-[220px] flex-none overflow-hidden rounded-2xl bg-card transition-transform active:scale-[0.98]"
+      className="block w-[220px] flex-none overflow-hidden rounded-2xl bg-card transition-transform active:scale-[0.98] md:w-auto md:flex-auto"
     >
       <div
-        className={`relative h-[150px] crag-img-${crag.imageId}`}
+        className={`relative h-[150px] crag-img-${crag.imageId} md:h-[200px]`}
         aria-label={`Bilde av ${crag.name}`}
       >
         <div className="absolute left-2.5 top-2.5">
