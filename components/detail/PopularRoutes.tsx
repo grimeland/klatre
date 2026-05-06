@@ -2,45 +2,76 @@ import type { Route } from "@/types/crag";
 
 export function PopularRoutes({ routes }: { routes: Route[] }) {
   const popular = [...routes]
-    .sort((a, b) => Number(b.isClassic) - Number(a.isClassic) || b.ascents - a.ascents)
-    .slice(0, 5);
+    .sort(
+      (a, b) =>
+        Number(b.isClassic) - Number(a.isClassic) || b.ascents - a.ascents,
+    )
+    .slice(0, 6);
 
   if (popular.length === 0) return null;
 
   return (
-    <div className="no-scrollbar -mx-6 flex gap-3 overflow-x-auto px-6 pb-1 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 lg:grid-cols-4 [scroll-snap-type:x_mandatory] [&>*]:[scroll-snap-align:start]">
-      {popular.map((r) => {
-        const imgId = ((r.gradeNumeric % 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
-        return (
-          <button
-            key={r.id}
-            type="button"
-            className="block w-[190px] flex-none overflow-hidden rounded-2xl bg-card text-left transition active:scale-[0.98] md:w-auto md:flex-auto"
-          >
-            <div className={`relative h-[130px] crag-img-${imgId} md:h-[160px]`}>
-              {r.isClassic && (
-                <span className="absolute left-2.5 top-2.5 rounded-full bg-white/95 px-2 py-1 text-[10px] font-bold tracking-tight text-ink">
-                  ★ Klassiker
-                </span>
-              )}
-            </div>
-            <div className="p-3.5">
-              <div className="text-[11px] tracking-tight text-sun">
-                {"★".repeat(r.stars)}
+    <div className="relative md:max-w-2xl">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[48px] top-3 bottom-3 w-px bg-line"
+      />
+
+      <div className="space-y-6">
+        {popular.map((r) => {
+          const imgId = ((r.gradeNumeric % 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+          return (
+            <button
+              key={r.id}
+              type="button"
+              className="relative flex w-full items-start gap-4 text-left transition active:opacity-70"
+            >
+              <div
+                className={`relative z-10 h-24 w-24 flex-none overflow-hidden rounded-2xl bg-card crag-img-${imgId}`}
+              >
+                {r.isClassic && (
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[9px] font-bold text-ink shadow-sm">
+                    ★
+                  </span>
+                )}
               </div>
-              <div className="mt-1 text-[15px] font-semibold leading-tight text-ink">
-                {r.name}
+              <div className="flex-1 pt-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h4 className="text-[16px] font-semibold leading-tight text-ink md:text-[17px]">
+                    {r.name}
+                  </h4>
+                  <span className="font-mono rounded-md border border-line bg-card px-2 py-0.5 text-[11px] font-bold tracking-tight text-ink">
+                    {r.grade}
+                  </span>
+                </div>
+                <div className="mt-1 text-[12px] tracking-tight text-sun">
+                  {"★".repeat(r.stars)}
+                  {r.stars < 3 && (
+                    <span className="text-line">
+                      {"★".repeat(3 - r.stars)}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-ink-2 md:text-[14px]">
+                  {r.lengthM} m · {labelForType(r.type)} · {r.ascents} har
+                  klatret
+                </p>
+                {r.isClassic && (
+                  <p className="mt-1 text-[12px] font-semibold text-primary">
+                    Klassiker
+                  </p>
+                )}
               </div>
-              <div className="mt-1 text-[12px] text-ink-3">
-                {r.grade} · {r.lengthM} m · Sport
-              </div>
-              <div className="mt-1.5 text-[11px] text-ink-3">
-                {r.ascents} har klatret
-              </div>
-            </div>
-          </button>
-        );
-      })}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
+}
+
+function labelForType(t: Route["type"]): string {
+  if (t === "buldring") return "Buldring";
+  if (t === "trad") return "Trad";
+  return "Sport";
 }

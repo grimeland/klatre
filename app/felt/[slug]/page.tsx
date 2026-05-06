@@ -76,8 +76,29 @@ export default async function CragDetailPage({ params }: { params: Params }) {
             </p>
           )}
 
+          {crag.routes.length > 0 && (
+            <div className="mt-8 md:mt-12">
+              <h2 className="mb-5 font-serif text-[24px] leading-tight tracking-tight text-ink md:mb-6 md:text-[30px]">
+                Populære ruter
+              </h2>
+              <PopularRoutes routes={crag.routes} />
+            </div>
+          )}
+
+          {crag.routes.length > 0 && (
+            <div className="mt-12 md:mt-16">
+              <h2 className="mb-5 font-serif text-[24px] leading-tight tracking-tight text-ink md:mb-6 md:text-[30px]">
+                Alle ruter ({crag.routes.length})
+              </h2>
+              <RouteList routes={crag.routes} />
+            </div>
+          )}
+
           {hasDryness && (
-            <div className="mt-6 md:mt-8">
+            <div className="mt-12 md:mt-16">
+              <h3 className="mb-3 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
+                Forhold
+              </h3>
               <DrynessBlock crag={crag} />
             </div>
           )}
@@ -88,24 +109,6 @@ export default async function CragDetailPage({ params }: { params: Params }) {
                 Vær neste 3 dager
               </h3>
               <WeatherForecast crag={crag} />
-            </div>
-          )}
-
-          {crag.routes.length > 0 && (
-            <div className="mt-10 md:mt-14">
-              <h3 className="mb-4 px-1 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
-                Populære ruter
-              </h3>
-              <PopularRoutes routes={crag.routes} />
-            </div>
-          )}
-
-          {crag.routes.length > 0 && (
-            <div className="mt-10 md:mt-14">
-              <h3 className="mb-4 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
-                Alle ruter ({crag.routes.length})
-              </h3>
-              <RouteList routes={crag.routes} />
             </div>
           )}
 
