@@ -7,10 +7,9 @@ import { HeartButton } from "@/components/ui/HeartButton";
 type Props = {
   crag: Crag;
   onSelect?: () => void;
-  isActive?: boolean;
 };
 
-export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
+export function CragCardLarge({ crag, onSelect }: Props) {
   const isBouldering = crag.climbingTypes.includes("buldring");
   const itemLabel = isBouldering ? "problemer" : "ruter";
   const climbingLabel = crag.climbingTypes
@@ -30,9 +29,7 @@ export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
   const inner = (
     <>
       <div
-        className={`relative aspect-[5/4] overflow-hidden rounded-2xl crag-img-${crag.imageId} transition-shadow ${
-          isActive ? "ring-2 ring-ink" : ""
-        }`}
+        className={`relative aspect-[5/4] overflow-hidden rounded-2xl crag-img-${crag.imageId}`}
       >
         <div className="absolute left-3 top-3">
           <DrynessBadge dryness={crag.dryness} />

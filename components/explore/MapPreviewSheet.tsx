@@ -13,7 +13,8 @@ import {
 
 const WIDTH = 260;
 const HEIGHT = 290;
-const PIN_HALF = 16;
+const PIN_HALF_H = 16;
+const PIN_HALF_W = 90;
 const GAP = 14;
 const EDGE_PADDING = 12;
 
@@ -45,38 +46,38 @@ export function MapPreviewSheet({
         centeredLeft + width <= size.x - EDGE_PADDING;
 
       const fitsBelow =
-        point.y + PIN_HALF + GAP + height <= size.y - EDGE_PADDING;
+        point.y + PIN_HALF_H + GAP + height <= size.y - EDGE_PADDING;
       const fitsAbove =
-        point.y - PIN_HALF - GAP - height >= EDGE_PADDING;
+        point.y - PIN_HALF_H - GAP - height >= EDGE_PADDING;
       const fitsRight =
-        point.x + PIN_HALF + GAP + width <= size.x - EDGE_PADDING;
+        point.x + PIN_HALF_W + GAP + width <= size.x - EDGE_PADDING;
       const fitsLeft =
-        point.x - PIN_HALF - GAP - width >= EDGE_PADDING;
+        point.x - PIN_HALF_W - GAP - width >= EDGE_PADDING;
 
       let left: number;
       let top: number;
 
       if (fitsCenteredX && fitsBelow) {
         left = centeredLeft;
-        top = point.y + PIN_HALF + GAP;
+        top = point.y + PIN_HALF_H + GAP;
       } else if (fitsCenteredX && fitsAbove) {
         left = centeredLeft;
-        top = point.y - PIN_HALF - GAP - height;
+        top = point.y - PIN_HALF_H - GAP - height;
       } else if (fitsRight) {
-        left = point.x + PIN_HALF + GAP;
+        left = point.x + PIN_HALF_W + GAP;
         top = point.y - height / 2;
       } else if (fitsLeft) {
-        left = point.x - PIN_HALF - GAP - width;
+        left = point.x - PIN_HALF_W - GAP - width;
         top = point.y - height / 2;
       } else if (fitsBelow) {
         left = centeredLeft;
-        top = point.y + PIN_HALF + GAP;
+        top = point.y + PIN_HALF_H + GAP;
       } else if (fitsAbove) {
         left = centeredLeft;
-        top = point.y - PIN_HALF - GAP - height;
+        top = point.y - PIN_HALF_H - GAP - height;
       } else {
         left = centeredLeft;
-        top = point.y + PIN_HALF + GAP;
+        top = point.y + PIN_HALF_H + GAP;
       }
 
       if (left < EDGE_PADDING) left = EDGE_PADDING;
