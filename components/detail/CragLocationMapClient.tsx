@@ -9,7 +9,7 @@ const CragLocationMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-[260px] place-items-center rounded-2xl bg-[#e9e3d5] text-ink-3 md:h-[320px]">
+      <div className="grid h-[260px] place-items-center rounded-2xl bg-zinc-100 text-ink-3 md:h-[320px]">
         Laster kart …
       </div>
     ),

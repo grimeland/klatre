@@ -12,7 +12,7 @@ const ExploreMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-full place-items-center bg-[#e9e3d5] text-ink-3">
+      <div className="grid h-full place-items-center bg-zinc-100 text-ink-3">
         Laster kart …
       </div>
     ),

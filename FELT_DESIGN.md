@@ -39,11 +39,11 @@ To krefter forsterker hverandre:
 
 | | Verdi | Kommentar |
 |---|---|---|
-| Bakgrunn | `--color-bg` `#F6F2EA` | Off-white, varm. Aldri rent hvit. |
-| Kort | `--color-card` `#FFFFFF` | Står frem mot bakgrunnen |
+| Bakgrunn | `--color-bg` `#FFFFFF` | Ren hvit. Apple-aktig. |
+| Kort | `--color-card` `#FFFFFF` | Smelter med bakgrunnen — luft og bilde-ratio gir kortet sin form |
 | Primær handling | `--color-primary` `#1F3D2B` | Dyp skog-grønn — passer fjell, ikke generisk merkevare-blå |
 | Tekst | `--color-ink` `#1A1A1A` → `ink-2` `#4A4A4A` → `ink-3` `#8A8A8A` | Tre nivåer holder hierarki uten font-vekt-trick |
-| Rammer | `--color-line` `#E8E2D5` | **Kun** for input-rammer og lett struktur. Aldri som divider. |
+| Rammer | `--color-line` `#ECECEC` | **Kun** for input-rammer og lett struktur. Aldri som divider. |
 | Sol-akssent | `--color-sun` `#D89A2E` | Tørrhet, klatregrader-stjerne |
 | Regn-akssent | `--color-rain` `#6B8A9E` | Vær-indikator |
 

@@ -10,7 +10,7 @@ const ExploreMap = dynamic(
   () => import("@/components/explore/ExploreMap").then((m) => m.ExploreMap),
   {
     ssr: false,
-    loading: () => <div className="h-full w-full bg-[#e9e3d5]" />,
+    loading: () => <div className="h-full w-full bg-zinc-100" />,
   },
 );
 
@@ -84,7 +84,6 @@ export function HomeView({ crags }: { crags: Crag[] }) {
                 >
                   <CragCardLarge
                     crag={c}
-                    onSelect={() => setSelectedId(c.id)}
                     isActive={c.id === selectedId}
                   />
                 </div>
