@@ -55,10 +55,11 @@ export function HomeView({ crags }: { crags: Crag[] }) {
 
       <div
         className="
-          absolute z-10 overflow-hidden bg-white shadow-2xl
+          absolute overflow-hidden bg-white shadow-2xl
           inset-x-2 bottom-2 top-[40%] rounded-3xl
           md:inset-y-4 md:left-4 md:right-auto md:top-4 md:w-[400px] md:rounded-3xl
         "
+        style={{ zIndex: 1100 }}
       >
         <HomePanel
           crags={filteredCrags}
@@ -69,7 +70,10 @@ export function HomeView({ crags }: { crags: Crag[] }) {
         />
       </div>
 
-      <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 md:bottom-6">
+      <div
+        className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 md:bottom-6"
+        style={{ zIndex: 1200 }}
+      >
         <Link
           href="/utforsk"
           className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white shadow-xl transition active:scale-[0.98]"
