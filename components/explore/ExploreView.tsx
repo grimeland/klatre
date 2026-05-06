@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import type { Crag } from "@/types/crag";
 import { CragCardLarge } from "@/components/cards/CragCardLarge";
 
@@ -19,20 +20,39 @@ const ExploreMap = dynamic(
 );
 
 const FILTER_CHIPS = [
-  { id: "sport", label: "Sport", on: true },
-  { id: "trad", label: "Trad", on: false },
-  { id: "buldring", label: "Buldring", on: false },
-  { id: "dry-3", label: "Tørt 3+ dager", on: false },
-  { id: "grade", label: "Grad ▾", on: false },
+  { id: "sport", label: "Sport" },
+  { id: "trad", label: "Trad" },
+  { id: "buldring", label: "Buldring" },
+  { id: "dry-3", label: "Tørt 3+ dager" },
 ];
 
-export function ExploreView({ crags }: { crags: Crag[] }) {
-  const [view, setView] = useState<"list" | "map">("list");
-  const [activeFilters, setActiveFilters] = useState<Set<string>>(
-    new Set(["sport"]),
-  );
+type ViewMode = "list" | "map";
 
-  function toggle(id: string) {
+export function ExploreView({ crags }: { crags: Crag[] }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initialView: ViewMode = searchParams?.get("view") === "map" ? "map" : "list";
+
+  const [view, setView] = useState<ViewMode>(initialView);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const next: ViewMode = searchParams?.get("view") === "map" ? "map" : "list";
+    setView(next);
+  }, [searchParams]);
+
+  function toggleView() {
+    const next = view === "list" ? "map" : "list";
+    setView(next);
+    const params = new URLSearchParams(searchParams?.toString());
+    if (next === "map") params.set("view", "map");
+    else params.delete("view");
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
+
+  function toggleFilter(id: string) {
     setActiveFilters((prev) => {
       const n = new Set(prev);
       if (n.has(id)) n.delete(id);
@@ -78,7 +98,7 @@ export function ExploreView({ crags }: { crags: Crag[] }) {
             <button
               key={c.id}
               type="button"
-              onClick={() => toggle(c.id)}
+              onClick={() => toggleFilter(c.id)}
               className={`flex-shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition ${
                 on
                   ? "border-ink bg-ink text-white"
@@ -106,7 +126,7 @@ export function ExploreView({ crags }: { crags: Crag[] }) {
 
         <button
           type="button"
-          onClick={() => setView(view === "list" ? "map" : "list")}
+          onClick={toggleView}
           className="fixed bottom-24 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[13px] font-semibold text-white shadow-lg md:bottom-8"
         >
           <span aria-hidden>{view === "list" ? "🗺" : "📋"}</span>

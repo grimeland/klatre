@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { fixtureCrags } from "@/lib/fixtures/crags";
 import { ExploreView } from "@/components/explore/ExploreView";
 
@@ -7,7 +8,9 @@ export default function UtforskPage() {
   );
   return (
     <main className="flex h-[calc(100vh-72px)] flex-col md:h-[calc(100vh-40px)]">
-      <ExploreView crags={crags} />
+      <Suspense fallback={null}>
+        <ExploreView crags={crags} />
+      </Suspense>
     </main>
   );
 }
