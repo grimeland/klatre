@@ -73,7 +73,7 @@ export function HomeView({ crags }: { crags: Crag[] }) {
             <p className="text-[14px] font-semibold text-ink md:text-[15px]">
               {summary}
             </p>
-            <div className="mt-4 grid gap-4 md:gap-5 lg:grid-cols-2">
+            <div className="mt-4 grid gap-x-4 gap-y-7 md:grid-cols-2 md:gap-x-5 md:gap-y-9 lg:grid-cols-3">
               {filtered.map((c) => (
                 <div
                   key={c.id}
