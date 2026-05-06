@@ -3,8 +3,16 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { Search, SlidersHorizontal, Map as MapIcon, List } from "lucide-react";
 import type { Crag } from "@/types/crag";
 import { CragCardLarge } from "@/components/cards/CragCardLarge";
+import { FilterModal } from "@/components/filters/FilterModal";
+import {
+  DEFAULT_FILTERS,
+  filterCount,
+  filterCrags,
+  type FilterState,
+} from "@/components/filters/types";
 
 const ExploreMap = dynamic(
   () => import("@/components/explore/ExploreMap").then((m) => m.ExploreMap),
@@ -25,9 +33,12 @@ export function HomeView({ crags }: { crags: Crag[] }) {
   const [view, setView] = useState<"list" | "map">("list");
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
-    let xs = [...crags];
+    let xs = filterCrags(crags, filters);
     if (activeTab === "nearby") xs = xs.filter((c) => c.distanceMinutes <= 90);
     if (activeTab === "weather")
       xs = xs.filter(
@@ -35,8 +46,16 @@ export function HomeView({ crags }: { crags: Crag[] }) {
           c.dryness.kind === "dry-cap" ||
           (c.dryness.kind === "dry" && c.dryness.days >= 3),
       );
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      xs = xs.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.area.toLowerCase().includes(q),
+      );
+    }
     return xs.sort((a, b) => a.distanceMinutes - b.distanceMinutes);
-  }, [crags, activeTab]);
+  }, [crags, filters, activeTab, query]);
 
   useEffect(() => {
     if (!filtered.find((c) => c.id === selectedId)) {
@@ -49,11 +68,18 @@ export function HomeView({ crags }: { crags: Crag[] }) {
       ? `${filtered.length} felt med bra vær`
       : activeTab === "nearby"
         ? `${filtered.length} felt innen 90 min fra Oslo`
-        : `${filtered.length} felt i Norge`;
+        : `${filtered.length} felt`;
+
+  const filterBadge = filterCount(filters);
 
   return (
     <div className="fixed inset-0 flex flex-col bg-bg">
-      <Header />
+      <Header
+        query={query}
+        onQuery={setQuery}
+        onOpenFilters={() => setFilterOpen(true)}
+        filterBadge={filterBadge}
+      />
       <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
       <div className="relative flex flex-1 min-h-0">
@@ -100,53 +126,79 @@ export function HomeView({ crags }: { crags: Crag[] }) {
         className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white shadow-lg md:hidden"
         style={{ zIndex: 1200 }}
       >
-        <span aria-hidden>{view === "list" ? "🗺" : "📋"}</span>
+        {view === "list" ? <MapIcon size={16} /> : <List size={16} />}
         {view === "list" ? "Vis kart" : "Vis liste"}
       </button>
+
+      <FilterModal
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filters={filters}
+        onChange={setFilters}
+        visibleCount={filtered.length}
+      />
     </div>
   );
 }
 
-function Header() {
+function Header({
+  query,
+  onQuery,
+  onOpenFilters,
+  filterBadge,
+}: {
+  query: string;
+  onQuery: (s: string) => void;
+  onOpenFilters: () => void;
+  filterBadge: number;
+}) {
   return (
-    <header className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:px-8 md:py-4">
+    <header className="flex flex-shrink-0 items-center gap-3 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:px-8 md:py-4">
       <Link
         href="/"
-        className="font-serif text-[22px] tracking-tight text-ink md:text-[28px]"
+        className="flex-shrink-0 font-serif text-[22px] tracking-tight text-ink md:text-[28px]"
       >
         Felt
       </Link>
 
-      <Link
-        href="/utforsk"
-        className="hidden max-w-md flex-1 items-center gap-3 rounded-full border border-line bg-card px-2 py-1.5 shadow-sm md:flex"
-      >
-        <span className="flex-1 px-3 text-[13px] font-semibold text-ink">
-          Klatre i Norge
-        </span>
-        <span className="border-l border-line px-3 text-[13px] text-ink-2">
-          Sport
-        </span>
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-ink">
-          <span aria-hidden>⌕</span>
-        </span>
-      </Link>
+      <div className="flex flex-1 items-center gap-2 md:max-w-xl">
+        <label
+          htmlFor="felt-search"
+          className="flex flex-1 items-center gap-2.5 rounded-full border border-line bg-card px-4 py-2 shadow-sm focus-within:border-ink"
+        >
+          <Search size={16} className="text-ink-2" />
+          <input
+            id="felt-search"
+            type="search"
+            value={query}
+            onChange={(e) => onQuery(e.target.value)}
+            placeholder="Søk i felt"
+            className="flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-3"
+          />
+        </label>
 
-      <div className="flex items-center gap-2">
         <button
           type="button"
-          className="flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-[13px] font-medium text-ink-2 md:px-4 md:py-2"
+          onClick={onOpenFilters}
+          aria-label="Filtre"
+          className="relative flex items-center gap-2 rounded-full border border-line bg-card px-3 py-2 text-[13px] font-medium text-ink-2 hover:border-ink md:px-4"
         >
-          <span aria-hidden>⇅</span>
+          <SlidersHorizontal size={16} />
           <span className="hidden md:inline">Filtre</span>
+          {filterBadge > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-[10px] font-bold text-white">
+              {filterBadge}
+            </span>
+          )}
         </button>
-        <Link
-          href="/profil"
-          className="hidden rounded-full border border-line bg-card px-3 py-2 text-[13px] font-medium text-ink md:inline-flex"
-        >
-          Logg inn
-        </Link>
       </div>
+
+      <Link
+        href="/profil"
+        className="hidden flex-shrink-0 rounded-full border border-line bg-card px-4 py-2 text-[13px] font-medium text-ink md:inline-flex"
+      >
+        Logg inn
+      </Link>
     </header>
   );
 }
