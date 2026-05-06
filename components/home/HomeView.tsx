@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Crag } from "@/types/crag";
 import { CragCardLarge } from "@/components/cards/CragCardLarge";
 
@@ -24,6 +24,8 @@ const TABS: { id: Tab; label: string }[] = [
 export function HomeView({ crags }: { crags: Crag[] }) {
   const [view, setView] = useState<"list" | "map">("list");
   const [activeTab, setActiveTab] = useState<Tab>("all");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const filtered = useMemo(() => {
     let xs = [...crags];
@@ -36,6 +38,18 @@ export function HomeView({ crags }: { crags: Crag[] }) {
       );
     return xs.sort((a, b) => a.distanceMinutes - b.distanceMinutes);
   }, [crags, activeTab]);
+
+  useEffect(() => {
+    if (!filtered.find((c) => c.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [filtered, selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const el = cardRefs.current.get(selectedId);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [selectedId]);
 
   const summary =
     activeTab === "weather"
@@ -51,7 +65,7 @@ export function HomeView({ crags }: { crags: Crag[] }) {
 
       <div className="relative flex flex-1 min-h-0">
         <div
-          className={`flex-1 overflow-y-auto md:flex-none md:w-3/5 lg:w-1/2 ${
+          className={`no-scrollbar flex-1 overflow-y-auto md:flex-none md:w-3/5 lg:w-1/2 ${
             view === "map" ? "hidden md:block" : ""
           }`}
         >
@@ -61,7 +75,19 @@ export function HomeView({ crags }: { crags: Crag[] }) {
             </p>
             <div className="mt-4 grid gap-4 md:gap-5 lg:grid-cols-2">
               {filtered.map((c) => (
-                <CragCardLarge key={c.id} crag={c} />
+                <div
+                  key={c.id}
+                  ref={(el) => {
+                    if (el) cardRefs.current.set(c.id, el);
+                    else cardRefs.current.delete(c.id);
+                  }}
+                >
+                  <CragCardLarge
+                    crag={c}
+                    onSelect={() => setSelectedId(c.id)}
+                    isActive={c.id === selectedId}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -75,8 +101,14 @@ export function HomeView({ crags }: { crags: Crag[] }) {
           } md:flex-1`}
           style={{ zIndex: view === "map" ? 50 : "auto" }}
         >
-          <div className="h-full w-full">
-            <ExploreMap crags={filtered} />
+          <div className="h-full w-full md:p-4 md:pl-0">
+            <div className="h-full w-full overflow-hidden md:rounded-3xl">
+              <ExploreMap
+                crags={filtered}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
+            </div>
           </div>
         </div>
       </div>

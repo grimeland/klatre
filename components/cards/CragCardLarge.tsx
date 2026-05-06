@@ -4,7 +4,13 @@ import { formatDistance } from "@/lib/utils/format";
 import { DrynessBadge } from "@/components/ui/DrynessBadge";
 import { HeartButton } from "@/components/ui/HeartButton";
 
-export function CragCardLarge({ crag }: { crag: Crag }) {
+type Props = {
+  crag: Crag;
+  onSelect?: () => void;
+  isActive?: boolean;
+};
+
+export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
   const isBouldering = crag.climbingTypes.includes("buldring");
   const itemLabel = isBouldering ? "problemer" : "ruter";
   const climbingLabel = crag.climbingTypes
@@ -21,11 +27,8 @@ export function CragCardLarge({ crag }: { crag: Crag }) {
     .filter(Boolean)
     .join(" · ");
 
-  return (
-    <Link
-      href={`/felt/${crag.slug}`}
-      className="block overflow-hidden rounded-2xl bg-card transition active:scale-[0.99]"
-    >
+  const inner = (
+    <>
       <div className={`relative h-[220px] crag-img-${crag.imageId} md:h-[260px]`}>
         <div className="absolute left-3 top-3">
           <DrynessBadge dryness={crag.dryness} />
@@ -43,6 +46,24 @@ export function CragCardLarge({ crag }: { crag: Crag }) {
         </div>
         <div className="mt-1 text-[13px] text-ink-3">{meta || crag.area}</div>
       </div>
+    </>
+  );
+
+  const className = `block w-full overflow-hidden rounded-2xl bg-card text-left transition active:scale-[0.99] ${
+    isActive ? "ring-2 ring-ink" : ""
+  }`;
+
+  if (onSelect) {
+    return (
+      <button type="button" onClick={onSelect} className={className}>
+        {inner}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={`/felt/${crag.slug}`} className={className}>
+      {inner}
     </Link>
   );
 }

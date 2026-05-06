@@ -1,21 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import type { Crag } from "@/types/crag";
-import { formatDryness, formatDistance } from "@/lib/utils/format";
 import { ExploreBottomSheet } from "./ExploreBottomSheet";
 
 type Props = {
   crags: Crag[];
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
 };
 
 const OSLO: [number, number] = [59.9139, 10.7522];
 
-export function ExploreMap({ crags }: Props) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
+export function ExploreMap({ crags, selectedId, onSelect }: Props) {
   const selected = useMemo(
     () => crags.find((c) => c.id === selectedId) ?? null,
     [crags, selectedId],
@@ -41,28 +40,26 @@ export function ExploreMap({ crags }: Props) {
           maxZoom={19}
           opacity={0.85}
         />
-        <FitBounds crags={crags} />
+        <FitBoundsOnce crags={crags} />
+        <FlyTo crag={selected} />
         {crags.map((c) => (
           <CragMarker
             key={c.id}
             crag={c}
             selected={c.id === selectedId}
-            onSelect={() => setSelectedId(c.id)}
+            onSelect={() => onSelect(c.id)}
           />
         ))}
       </MapContainer>
 
       {selected && (
-        <ExploreBottomSheet
-          crag={selected}
-          onClose={() => setSelectedId(null)}
-        />
+        <ExploreBottomSheet crag={selected} onClose={() => onSelect(null)} />
       )}
     </div>
   );
 }
 
-function FitBounds({ crags }: { crags: Crag[] }) {
+function FitBoundsOnce({ crags }: { crags: Crag[] }) {
   const map = useMap();
   const fitted = useRef(false);
   useEffect(() => {
@@ -77,6 +74,15 @@ function FitBounds({ crags }: { crags: Crag[] }) {
   return null;
 }
 
+function FlyTo({ crag }: { crag: Crag | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!crag) return;
+    map.flyTo([crag.location.lat, crag.location.lng], 11, { duration: 0.6 });
+  }, [crag?.id, map]);
+  return null;
+}
+
 function CragMarker({
   crag,
   selected,
@@ -86,11 +92,10 @@ function CragMarker({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const formatted = formatDryness(crag.dryness);
-  const icon = formatted?.icon ?? "📍";
-  const distance = formatDistance(crag.distanceMinutes);
-
-  const html = `<div class="felt-pin ${selected ? "selected" : ""}"><span class="ic">${icon}</span><span>${distance}</span></div>`;
+  const display = crag.name.length > 22
+    ? `${crag.name.slice(0, 21).trim()}…`
+    : crag.name;
+  const html = `<div class="felt-pin ${selected ? "selected" : ""}">${escapeHtml(display)}</div>`;
 
   const divIcon = L.divIcon({
     className: "felt-pin-wrap",
@@ -106,4 +111,12 @@ function CragMarker({
       eventHandlers={{ click: onSelect }}
     />
   );
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

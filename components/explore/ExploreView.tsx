@@ -36,6 +36,7 @@ export function ExploreView({ crags }: { crags: Crag[] }) {
 
   const [view, setView] = useState<ViewMode>(initialView);
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     const next: ViewMode = searchParams?.get("view") === "map" ? "map" : "list";
@@ -120,7 +121,11 @@ export function ExploreView({ crags }: { crags: Crag[] }) {
           </div>
         ) : (
           <div className="absolute inset-0">
-            <ExploreMap crags={crags} />
+            <ExploreMap
+              crags={crags}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+            />
           </div>
         )}
 

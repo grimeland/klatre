@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import type { Crag } from "@/types/crag";
-import { formatDistance } from "@/lib/utils/format";
-import { DrynessBadge } from "@/components/ui/DrynessBadge";
+import {
+  computeAvgGrade,
+  formatDistance,
+  formatGradeRange,
+} from "@/lib/utils/format";
 
 export function ExploreBottomSheet({
   crag,
@@ -14,26 +17,32 @@ export function ExploreBottomSheet({
 }) {
   const isBouldering = crag.climbingTypes.includes("buldring");
   const itemLabel = isBouldering ? "problemer" : "ruter";
-  const meta = [
-    crag.routeCount ? `${crag.routeCount} ${itemLabel}` : null,
+  const avgGrade = computeAvgGrade(crag.routes);
+  const gradeRange =
     !isBouldering && crag.gradeLow && crag.gradeHigh
-      ? `${crag.gradeLow}–${crag.gradeHigh}`
-      : null,
-    crag.area,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+      ? formatGradeRange(crag.gradeLow, crag.gradeHigh)
+      : null;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1000] px-3 pb-24 md:inset-x-auto md:left-6 md:bottom-6 md:w-[420px] md:px-0 md:pb-0">
+    <div className="pointer-events-none absolute inset-x-3 bottom-3 md:inset-x-auto md:bottom-6 md:left-6 md:w-[340px]"
+      style={{ zIndex: 1000 }}
+    >
       <Link
         href={`/felt/${crag.slug}`}
         className="pointer-events-auto block overflow-hidden rounded-2xl bg-card shadow-xl transition active:scale-[0.99]"
       >
-        <div className={`relative h-[160px] crag-img-${crag.imageId}`}>
-          <div className="absolute left-3 top-3">
-            <DrynessBadge dryness={crag.dryness} />
-          </div>
+        <div className={`relative h-[200px] crag-img-${crag.imageId}`}>
+          <button
+            type="button"
+            aria-label="Lagre"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="absolute right-12 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-ink shadow-sm"
+          >
+            <span aria-hidden>♡</span>
+          </button>
           <button
             type="button"
             aria-label="Lukk"
@@ -42,21 +51,31 @@ export function ExploreBottomSheet({
               e.stopPropagation();
               onClose();
             }}
-            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink"
+            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink shadow-sm"
           >
             <span aria-hidden>✕</span>
           </button>
         </div>
         <div className="p-4">
           <div className="flex items-baseline justify-between gap-3">
-            <div className="text-[16px] font-semibold text-ink">
+            <h3 className="text-[16px] font-semibold leading-tight text-ink">
               {crag.name}
-            </div>
-            <div className="text-[13px] font-medium text-ink-2">
+            </h3>
+            <span className="text-[13px] font-medium text-ink-2">
               {formatDistance(crag.distanceMinutes)}
-            </div>
+            </span>
           </div>
-          <div className="mt-1 text-[12px] text-ink-3">{meta}</div>
+          <p className="mt-1 text-[13px] text-ink-3">{crag.area}</p>
+          <p className="mt-2 text-[13px] text-ink-2">
+            {crag.routeCount
+              ? `${crag.routeCount} ${itemLabel}`
+              : "Ingen ruter registrert"}
+            {avgGrade
+              ? ` · snittgrad ${avgGrade}`
+              : gradeRange
+                ? ` · ${gradeRange}`
+                : ""}
+          </p>
         </div>
       </Link>
     </div>

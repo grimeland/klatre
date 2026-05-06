@@ -33,3 +33,16 @@ export function formatDryness(
 export function formatGradeRange(low: string, high: string): string {
   return `${low}–${high}`;
 }
+
+export function computeAvgGrade(
+  routes: { grade: string; gradeNumeric: number }[],
+): string | null {
+  if (routes.length === 0) return null;
+  const avg = routes.reduce((sum, r) => sum + r.gradeNumeric, 0) / routes.length;
+  const nearest = routes.reduce((closest, r) =>
+    Math.abs(r.gradeNumeric - avg) < Math.abs(closest.gradeNumeric - avg)
+      ? r
+      : closest,
+  );
+  return nearest.grade;
+}
