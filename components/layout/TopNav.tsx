@@ -6,7 +6,9 @@ import { usePathname } from "next/navigation";
 export function TopNav() {
   const pathname = usePathname();
   const hidden =
-    pathname?.startsWith("/felt/") || pathname?.startsWith("/utforsk");
+    pathname === "/" ||
+    pathname?.startsWith("/felt/") ||
+    pathname?.startsWith("/utforsk");
   if (hidden) return null;
 
   return (

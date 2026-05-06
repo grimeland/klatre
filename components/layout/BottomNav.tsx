@@ -13,7 +13,10 @@ const items: Item[] = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  const hidden = pathname?.startsWith("/felt/");
+  const hidden =
+    pathname === "/" ||
+    pathname?.startsWith("/felt/") ||
+    pathname?.startsWith("/utforsk");
   if (hidden) return null;
 
   return (
