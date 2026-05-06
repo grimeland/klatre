@@ -25,7 +25,7 @@ export function ExploreBottomSheet({
     .join(" · ");
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1000] px-3 pb-24 md:bottom-6 md:left-6 md:right-auto md:max-w-md md:px-0 md:pb-0">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1000] px-3 pb-24 md:inset-x-auto md:left-6 md:bottom-6 md:w-[420px] md:px-0 md:pb-0">
       <Link
         href={`/felt/${crag.slug}`}
         className="pointer-events-auto block overflow-hidden rounded-2xl bg-card shadow-xl transition active:scale-[0.99]"
