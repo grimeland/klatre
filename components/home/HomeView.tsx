@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Crag } from "@/types/crag";
 import { CragCardLarge } from "@/components/cards/CragCardLarge";
 
@@ -25,7 +25,6 @@ export function HomeView({ crags }: { crags: Crag[] }) {
   const [view, setView] = useState<"list" | "map">("list");
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const filtered = useMemo(() => {
     let xs = [...crags];
@@ -44,12 +43,6 @@ export function HomeView({ crags }: { crags: Crag[] }) {
       setSelectedId(null);
     }
   }, [filtered, selectedId]);
-
-  useEffect(() => {
-    if (!selectedId) return;
-    const el = cardRefs.current.get(selectedId);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [selectedId]);
 
   const summary =
     activeTab === "weather"
@@ -75,18 +68,11 @@ export function HomeView({ crags }: { crags: Crag[] }) {
             </p>
             <div className="mt-4 grid gap-x-4 gap-y-7 md:grid-cols-2 md:gap-x-5 md:gap-y-9 lg:grid-cols-3">
               {filtered.map((c) => (
-                <div
+                <CragCardLarge
                   key={c.id}
-                  ref={(el) => {
-                    if (el) cardRefs.current.set(c.id, el);
-                    else cardRefs.current.delete(c.id);
-                  }}
-                >
-                  <CragCardLarge
-                    crag={c}
-                    isActive={c.id === selectedId}
-                  />
-                </div>
+                  crag={c}
+                  isActive={c.id === selectedId}
+                />
               ))}
             </div>
           </div>

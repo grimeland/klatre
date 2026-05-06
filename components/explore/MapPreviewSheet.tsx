@@ -13,7 +13,8 @@ import {
 
 const WIDTH = 260;
 const HEIGHT = 290;
-const PIN_OFFSET = 18;
+const PIN_HALF = 16;
+const GAP = 14;
 const EDGE_PADDING = 12;
 
 type Pos = { left: number; top: number };
@@ -38,25 +39,53 @@ export function MapPreviewSheet({
       const width = Math.min(WIDTH, size.x - EDGE_PADDING * 2);
       const height = HEIGHT;
 
-      const spaceBelow = size.y - point.y - PIN_OFFSET - EDGE_PADDING;
-      const spaceAbove = point.y - PIN_OFFSET - EDGE_PADDING;
+      const centeredLeft = point.x - width / 2;
+      const fitsCenteredX =
+        centeredLeft >= EDGE_PADDING &&
+        centeredLeft + width <= size.x - EDGE_PADDING;
 
+      const fitsBelow =
+        point.y + PIN_HALF + GAP + height <= size.y - EDGE_PADDING;
+      const fitsAbove =
+        point.y - PIN_HALF - GAP - height >= EDGE_PADDING;
+      const fitsRight =
+        point.x + PIN_HALF + GAP + width <= size.x - EDGE_PADDING;
+      const fitsLeft =
+        point.x - PIN_HALF - GAP - width >= EDGE_PADDING;
+
+      let left: number;
       let top: number;
-      if (spaceBelow >= height) {
-        top = point.y + PIN_OFFSET;
-      } else if (spaceAbove >= height) {
-        top = point.y - PIN_OFFSET - height;
+
+      if (fitsCenteredX && fitsBelow) {
+        left = centeredLeft;
+        top = point.y + PIN_HALF + GAP;
+      } else if (fitsCenteredX && fitsAbove) {
+        left = centeredLeft;
+        top = point.y - PIN_HALF - GAP - height;
+      } else if (fitsRight) {
+        left = point.x + PIN_HALF + GAP;
+        top = point.y - height / 2;
+      } else if (fitsLeft) {
+        left = point.x - PIN_HALF - GAP - width;
+        top = point.y - height / 2;
+      } else if (fitsBelow) {
+        left = centeredLeft;
+        top = point.y + PIN_HALF + GAP;
+      } else if (fitsAbove) {
+        left = centeredLeft;
+        top = point.y - PIN_HALF - GAP - height;
       } else {
-        top =
-          spaceBelow > spaceAbove
-            ? size.y - height - EDGE_PADDING
-            : EDGE_PADDING;
+        left = centeredLeft;
+        top = point.y + PIN_HALF + GAP;
       }
 
-      let left = point.x - width / 2;
       if (left < EDGE_PADDING) left = EDGE_PADDING;
       if (left + width > size.x - EDGE_PADDING) {
         left = size.x - width - EDGE_PADDING;
+      }
+      if (top < EDGE_PADDING) top = EDGE_PADDING;
+      if (top + height > size.y - EDGE_PADDING) {
+        top = size.y - height - EDGE_PADDING;
       }
 
       setPos({ left, top });
