@@ -29,7 +29,11 @@ export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
 
   const inner = (
     <>
-      <div className={`relative h-[220px] crag-img-${crag.imageId} md:h-[260px]`}>
+      <div
+        className={`relative aspect-[5/4] overflow-hidden rounded-2xl crag-img-${crag.imageId} transition-shadow ${
+          isActive ? "ring-2 ring-ink" : ""
+        }`}
+      >
         <div className="absolute left-3 top-3">
           <DrynessBadge dryness={crag.dryness} />
         </div>
@@ -37,10 +41,12 @@ export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
           <HeartButton />
         </div>
       </div>
-      <div className="p-4 md:p-5">
+      <div className="mt-3 px-0.5">
         <div className="flex items-baseline justify-between gap-3">
-          <div className="text-[17px] font-semibold text-ink">{crag.name}</div>
-          <div className="text-[13px] font-medium text-ink-2">
+          <div className="text-[15px] font-semibold leading-tight text-ink md:text-[16px]">
+            {crag.name}
+          </div>
+          <div className="flex-shrink-0 text-[13px] font-medium text-ink-2">
             {formatDistance(crag.distanceMinutes)}
           </div>
         </div>
@@ -49,9 +55,7 @@ export function CragCardLarge({ crag, onSelect, isActive = false }: Props) {
     </>
   );
 
-  const className = `block w-full overflow-hidden rounded-2xl bg-card text-left transition active:scale-[0.99] ${
-    isActive ? "ring-2 ring-ink" : ""
-  }`;
+  const className = "block w-full text-left transition active:opacity-80";
 
   if (onSelect) {
     return (
