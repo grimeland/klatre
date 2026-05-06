@@ -4,84 +4,166 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Crag } from "@/types/crag";
-import { HomePanel, type Tab } from "./HomePanel";
+import { CragCardLarge } from "@/components/cards/CragCardLarge";
 
-const HomeMap = dynamic(() => import("./HomeMap").then((m) => m.HomeMap), {
-  ssr: false,
-  loading: () => <div className="h-full w-full bg-[#e9e3d5]" />,
-});
+const ExploreMap = dynamic(
+  () => import("@/components/explore/ExploreMap").then((m) => m.ExploreMap),
+  {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-[#e9e3d5]" />,
+  },
+);
+
+type Tab = "all" | "nearby" | "weather";
+const TABS: { id: Tab; label: string }[] = [
+  { id: "all", label: "Alle felt" },
+  { id: "nearby", label: "Nær deg" },
+  { id: "weather", label: "Bra vær" },
+];
 
 export function HomeView({ crags }: { crags: Crag[] }) {
-  const [activeTab, setActiveTab] = useState<Tab>("nearby");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [flyToTick, setFlyToTick] = useState(0);
-  const [flyToId, setFlyToId] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "map">("list");
+  const [activeTab, setActiveTab] = useState<Tab>("all");
 
-  const filteredCrags = useMemo(() => {
-    if (activeTab === "nearby") {
-      return crags
-        .filter((c) => c.distanceMinutes <= 90)
-        .sort((a, b) => a.distanceMinutes - b.distanceMinutes);
-    }
-    if (activeTab === "weather") {
-      return crags
-        .filter(
-          (c) =>
-            c.dryness.kind === "dry-cap" ||
-            (c.dryness.kind === "dry" && c.dryness.days >= 3),
-        )
-        .sort((a, b) => a.distanceMinutes - b.distanceMinutes);
-    }
-    return [...crags].sort((a, b) => a.distanceMinutes - b.distanceMinutes);
+  const filtered = useMemo(() => {
+    let xs = [...crags];
+    if (activeTab === "nearby") xs = xs.filter((c) => c.distanceMinutes <= 90);
+    if (activeTab === "weather")
+      xs = xs.filter(
+        (c) =>
+          c.dryness.kind === "dry-cap" ||
+          (c.dryness.kind === "dry" && c.dryness.days >= 3),
+      );
+    return xs.sort((a, b) => a.distanceMinutes - b.distanceMinutes);
   }, [crags, activeTab]);
 
-  function showOnMap(id: string) {
-    setSelectedId(id);
-    setFlyToId(id);
-    setFlyToTick((t) => t + 1);
-  }
+  const summary =
+    activeTab === "weather"
+      ? `${filtered.length} felt med bra vær`
+      : activeTab === "nearby"
+        ? `${filtered.length} felt innen 90 min fra Oslo`
+        : `${filtered.length} felt i Norge`;
 
   return (
-    <div className="fixed inset-0 bg-[#e9e3d5]">
-      <div className="absolute inset-0">
-        <HomeMap
-          crags={crags}
-          selectedId={selectedId}
-          onSelect={(id) => setSelectedId(id)}
-          flyToTick={flyToTick}
-          flyToId={flyToId}
-        />
+    <div className="fixed inset-0 flex flex-col bg-bg">
+      <Header />
+      <Tabs activeTab={activeTab} onChange={setActiveTab} />
+
+      <div className="relative flex flex-1 min-h-0">
+        <div
+          className={`flex-1 overflow-y-auto md:flex-none md:w-3/5 lg:w-1/2 ${
+            view === "map" ? "hidden md:block" : ""
+          }`}
+        >
+          <div className="px-4 pb-28 pt-4 md:px-8 md:pb-12">
+            <p className="text-[14px] font-semibold text-ink md:text-[15px]">
+              {summary}
+            </p>
+            <div className="mt-4 grid gap-4 md:gap-5 lg:grid-cols-2">
+              {filtered.map((c) => (
+                <CragCardLarge key={c.id} crag={c} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`${
+            view === "list"
+              ? "hidden md:block"
+              : "absolute inset-0 md:relative md:inset-auto"
+          } md:flex-1`}
+          style={{ zIndex: view === "map" ? 50 : "auto" }}
+        >
+          <div className="h-full w-full">
+            <ExploreMap crags={filtered} />
+          </div>
+        </div>
       </div>
 
-      <div
-        className="
-          absolute overflow-hidden bg-white shadow-2xl
-          inset-x-2 bottom-2 top-[40%] rounded-3xl
-          md:inset-y-4 md:left-4 md:right-auto md:top-4 md:w-[400px] md:rounded-3xl
-        "
-        style={{ zIndex: 1100 }}
-      >
-        <HomePanel
-          crags={filteredCrags}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          selectedId={selectedId}
-          onShowOnMap={showOnMap}
-        />
-      </div>
-
-      <div
-        className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 md:bottom-6"
+      <button
+        type="button"
+        onClick={() => setView(view === "list" ? "map" : "list")}
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white shadow-lg md:hidden"
         style={{ zIndex: 1200 }}
       >
-        <Link
-          href="/utforsk"
-          className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white shadow-xl transition active:scale-[0.98]"
-        >
+        <span aria-hidden>{view === "list" ? "🗺" : "📋"}</span>
+        {view === "list" ? "Vis kart" : "Vis liste"}
+      </button>
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <header className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:px-8 md:py-4">
+      <Link
+        href="/"
+        className="font-serif text-[22px] tracking-tight text-ink md:text-[28px]"
+      >
+        Felt
+      </Link>
+
+      <Link
+        href="/utforsk"
+        className="hidden max-w-md flex-1 items-center gap-3 rounded-full border border-line bg-card px-2 py-1.5 shadow-sm md:flex"
+      >
+        <span className="flex-1 px-3 text-[13px] font-semibold text-ink">
+          Klatre i Norge
+        </span>
+        <span className="border-l border-line px-3 text-[13px] text-ink-2">
+          Sport
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-ink">
           <span aria-hidden>⌕</span>
-          Søk og filtrer
+        </span>
+      </Link>
+
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-[13px] font-medium text-ink-2 md:px-4 md:py-2"
+        >
+          <span aria-hidden>⇅</span>
+          <span className="hidden md:inline">Filtre</span>
+        </button>
+        <Link
+          href="/profil"
+          className="hidden rounded-full border border-line bg-card px-3 py-2 text-[13px] font-medium text-ink md:inline-flex"
+        >
+          Logg inn
         </Link>
       </div>
+    </header>
+  );
+}
+
+function Tabs({
+  activeTab,
+  onChange,
+}: {
+  activeTab: Tab;
+  onChange: (t: Tab) => void;
+}) {
+  return (
+    <div className="no-scrollbar flex flex-shrink-0 gap-2 overflow-x-auto px-4 py-3 md:px-8">
+      {TABS.map((t) => {
+        const on = t.id === activeTab;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => onChange(t.id)}
+            className={`flex-shrink-0 rounded-full border px-4 py-1.5 text-[13px] font-medium transition ${
+              on
+                ? "border-ink bg-ink text-white"
+                : "border-line bg-card text-ink-2"
+            }`}
+          >
+            {t.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
