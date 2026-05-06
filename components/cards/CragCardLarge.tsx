@@ -1,18 +1,25 @@
 import Link from "next/link";
 import type { Crag } from "@/types/crag";
-import { formatDistance, formatGradeRange } from "@/lib/utils/format";
+import { formatDistance } from "@/lib/utils/format";
 import { DrynessBadge } from "@/components/ui/DrynessBadge";
 import { HeartButton } from "@/components/ui/HeartButton";
 
 export function CragCardLarge({ crag }: { crag: Crag }) {
   const isBouldering = crag.climbingTypes.includes("buldring");
-  const grade = formatGradeRange(crag.gradeLow, crag.gradeHigh);
-  const itemCount = isBouldering
-    ? `${crag.routeCount} problemer`
-    : `${crag.routeCount} ruter`;
+  const itemLabel = isBouldering ? "problemer" : "ruter";
   const climbingLabel = crag.climbingTypes
     .map((t) => labelForType(t))
     .join(" + ");
+  const meta = [
+    crag.routeCount ? `${crag.routeCount} ${itemLabel}` : null,
+    !isBouldering && crag.gradeLow && crag.gradeHigh
+      ? `${crag.gradeLow}–${crag.gradeHigh}`
+      : null,
+    climbingLabel,
+    crag.exposure.length > 0 ? `${exposureLabel(crag.exposure)}-vendt` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <Link
@@ -34,12 +41,7 @@ export function CragCardLarge({ crag }: { crag: Crag }) {
             {formatDistance(crag.distanceMinutes)}
           </div>
         </div>
-        <div className="mt-1 text-[13px] text-ink-3">
-          {itemCount}
-          {!isBouldering && ` · ${grade}`} · {climbingLabel}
-          {crag.exposure.length > 0 &&
-            ` · ${exposureLabel(crag.exposure)}-vendt`}
-        </div>
+        <div className="mt-1 text-[13px] text-ink-3">{meta || crag.area}</div>
       </div>
     </Link>
   );

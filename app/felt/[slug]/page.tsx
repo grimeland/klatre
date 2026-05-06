@@ -1,12 +1,17 @@
 import { notFound } from "next/navigation";
 import { fixtureCrags, getCragBySlug } from "@/lib/fixtures/crags";
-import { formatDistance, formatGradeRange } from "@/lib/utils/format";
+import {
+  formatDistance,
+  formatGradeRange,
+} from "@/lib/utils/format";
+import { googleMapsDirectionsUrl } from "@/lib/utils/distance";
 import { Gallery } from "@/components/detail/Gallery";
 import { DrynessBlock } from "@/components/detail/DrynessBlock";
 import { WeatherForecast } from "@/components/detail/WeatherForecast";
 import { PopularRoutes } from "@/components/detail/PopularRoutes";
 import { RouteList } from "@/components/detail/RouteList";
 import { InfoBlock, InfoLine } from "@/components/detail/InfoBlock";
+import { CragLocationMapClient } from "@/components/detail/CragLocationMapClient";
 
 export async function generateStaticParams() {
   return fixtureCrags.map((c) => ({ slug: c.slug }));
@@ -19,13 +24,33 @@ export default async function CragDetailPage({ params }: { params: Params }) {
   const crag = getCragBySlug(slug);
   if (!crag) notFound();
 
-  const grade = formatGradeRange(crag.gradeLow, crag.gradeHigh);
+  const isBouldering = crag.climbingTypes.includes("buldring");
   const climbingTypeLabel = crag.climbingTypes
     .map((t) => labelForClimbingType(t))
     .join(" + ");
-  const itemCount = crag.climbingTypes.includes("buldring")
-    ? `${crag.routeCount} problemer`
-    : `${crag.routeCount} ruter`;
+  const itemCount = crag.routeCount
+    ? isBouldering
+      ? `${crag.routeCount} problemer`
+      : `${crag.routeCount} ruter`
+    : null;
+  const grade =
+    !isBouldering && crag.gradeLow && crag.gradeHigh
+      ? formatGradeRange(crag.gradeLow, crag.gradeHigh)
+      : null;
+  const metaParts = [climbingTypeLabel, itemCount, grade, crag.rockType].filter(
+    Boolean,
+  );
+  const directionsUrl = googleMapsDirectionsUrl(crag.location, crag.name);
+
+  const hasWeather = crag.weatherNext3Days.length > 0;
+  const hasDryness = crag.drynessTimeline.length > 0;
+  const hasComeHere =
+    crag.parkingNote ||
+    crag.approachNote ||
+    crag.exposureNote ||
+    crag.rockType ||
+    crag.seasonNote;
+  const hasPractical = crag.accessNote || crag.localClub;
 
   return (
     <main className="flex flex-col flex-1">
@@ -39,20 +64,32 @@ export default async function CragDetailPage({ params }: { params: Params }) {
           <p className="mt-1 text-[14px] text-ink-2 md:text-[15px]">
             {crag.area} · {formatDistance(crag.distanceMinutes)} fra deg
           </p>
-          <p className="mt-1 text-[13px] text-ink-3 md:text-[14px]">
-            {climbingTypeLabel} · {itemCount} · {grade} · {crag.rockType}
-          </p>
+          {metaParts.length > 0 && (
+            <p className="mt-1 text-[13px] text-ink-3 md:text-[14px]">
+              {metaParts.join(" · ")}
+            </p>
+          )}
 
-          <div className="mt-6 md:mt-8">
-            <DrynessBlock crag={crag} />
-          </div>
+          {crag.description && (
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-ink-2 md:mt-6 md:text-[16px]">
+              {crag.description}
+            </p>
+          )}
 
-          <div className="mt-8 md:mt-10">
-            <h3 className="mb-3 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
-              Vær neste 3 dager
-            </h3>
-            <WeatherForecast crag={crag} />
-          </div>
+          {hasDryness && (
+            <div className="mt-6 md:mt-8">
+              <DrynessBlock crag={crag} />
+            </div>
+          )}
+
+          {hasWeather && (
+            <div className="mt-8 md:mt-10">
+              <h3 className="mb-3 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
+                Vær neste 3 dager
+              </h3>
+              <WeatherForecast crag={crag} />
+            </div>
+          )}
 
           {crag.routes.length > 0 && (
             <div className="mt-10 md:mt-14">
@@ -72,20 +109,55 @@ export default async function CragDetailPage({ params }: { params: Params }) {
             </div>
           )}
 
-          <div className="mt-10 grid gap-8 md:mt-14 md:grid-cols-2 md:gap-10">
-            <InfoBlock title="Komme dit">
-              <InfoLine label="Parkering" value={crag.parkingNote} />
-              <InfoLine label="Innsteg" value={crag.approachNote} />
-              <InfoLine label="Eksposisjon" value={crag.exposureNote} />
-              <InfoLine label="Bergart" value={crag.rockType} />
-              <InfoLine label="Sesong" value={crag.seasonNote} />
-            </InfoBlock>
-            <InfoBlock title="Praktisk">
-              <InfoLine label="Tilgang" value={crag.accessNote} />
-              <InfoLine label="Mobildekning" value="God" />
-              <InfoLine label="Lokal klubb" value={crag.localClub} />
-            </InfoBlock>
+          <div className="mt-10 md:mt-14">
+            <h3 className="mb-4 text-[12px] font-semibold tracking-wide text-ink-3 md:text-[13px]">
+              Hvor er feltet
+            </h3>
+            <CragLocationMapClient location={crag.location} name={crag.name} />
+            <a
+              href={directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-line bg-card py-3 text-[14px] font-semibold text-ink md:w-auto md:px-6"
+            >
+              Få veibeskrivelse <span aria-hidden>↗</span>
+            </a>
           </div>
+
+          {(hasComeHere || hasPractical) && (
+            <div className="mt-10 grid gap-8 md:mt-14 md:grid-cols-2 md:gap-10">
+              {hasComeHere && (
+                <InfoBlock title="Komme dit">
+                  {crag.parkingNote && (
+                    <InfoLine label="Parkering" value={crag.parkingNote} />
+                  )}
+                  {crag.approachNote && (
+                    <InfoLine label="Innsteg" value={crag.approachNote} />
+                  )}
+                  {crag.exposureNote && (
+                    <InfoLine label="Eksposisjon" value={crag.exposureNote} />
+                  )}
+                  {crag.rockType && (
+                    <InfoLine label="Bergart" value={crag.rockType} />
+                  )}
+                  {crag.seasonNote && (
+                    <InfoLine label="Sesong" value={crag.seasonNote} />
+                  )}
+                </InfoBlock>
+              )}
+              {hasPractical && (
+                <InfoBlock title="Praktisk">
+                  {crag.accessNote && (
+                    <InfoLine label="Tilgang" value={crag.accessNote} />
+                  )}
+                  <InfoLine label="Mobildekning" value="God" />
+                  {crag.localClub && (
+                    <InfoLine label="Lokal klubb" value={crag.localClub} />
+                  )}
+                </InfoBlock>
+              )}
+            </div>
+          )}
         </div>
 
         <aside className="hidden md:block">
@@ -94,16 +166,16 @@ export default async function CragDetailPage({ params }: { params: Params }) {
               Komme deg dit
             </div>
             <p className="mt-2 text-[14px] text-ink-2">
-              Vi sender deg videre til kart-appen din for kjørerute fra din
+              Vi sender deg videre til Google Maps for kjørerute fra din
               posisjon.
             </p>
             <a
-              href={mapsLink(crag.location.lat, crag.location.lng, crag.name)}
+              href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-[15px] font-semibold text-primary-ink transition active:scale-[0.99]"
             >
-              Åpne i Kart <span aria-hidden>↗</span>
+              Få veibeskrivelse <span aria-hidden>↗</span>
             </a>
           </div>
         </aside>
@@ -114,21 +186,16 @@ export default async function CragDetailPage({ params }: { params: Params }) {
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
       >
         <a
-          href={mapsLink(crag.location.lat, crag.location.lng, crag.name)}
+          href={directionsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 text-[16px] font-semibold text-primary-ink"
         >
-          Åpne i Kart <span aria-hidden>↗</span>
+          Få veibeskrivelse <span aria-hidden>↗</span>
         </a>
       </div>
     </main>
   );
-}
-
-function mapsLink(lat: number, lng: number, name: string) {
-  const q = encodeURIComponent(`${name} (${lat},${lng})`);
-  return `https://maps.apple.com/?q=${q}&ll=${lat},${lng}`;
 }
 
 function labelForClimbingType(t: string): string {

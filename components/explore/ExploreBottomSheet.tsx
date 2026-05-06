@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import type { Crag } from "@/types/crag";
-import {
-  formatDistance,
-  formatGradeRange,
-} from "@/lib/utils/format";
+import { formatDistance } from "@/lib/utils/format";
 import { DrynessBadge } from "@/components/ui/DrynessBadge";
 
 export function ExploreBottomSheet({
@@ -16,10 +13,16 @@ export function ExploreBottomSheet({
   onClose: () => void;
 }) {
   const isBouldering = crag.climbingTypes.includes("buldring");
-  const grade = formatGradeRange(crag.gradeLow, crag.gradeHigh);
-  const itemCount = isBouldering
-    ? `${crag.routeCount} problemer`
-    : `${crag.routeCount} ruter`;
+  const itemLabel = isBouldering ? "problemer" : "ruter";
+  const meta = [
+    crag.routeCount ? `${crag.routeCount} ${itemLabel}` : null,
+    !isBouldering && crag.gradeLow && crag.gradeHigh
+      ? `${crag.gradeLow}–${crag.gradeHigh}`
+      : null,
+    crag.area,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1000] px-3 pb-24 md:bottom-6 md:left-6 md:right-auto md:max-w-md md:px-0 md:pb-0">
@@ -53,10 +56,7 @@ export function ExploreBottomSheet({
               {formatDistance(crag.distanceMinutes)}
             </div>
           </div>
-          <div className="mt-1 text-[12px] text-ink-3">
-            {itemCount}
-            {!isBouldering && ` · ${grade}`} · {crag.area}
-          </div>
+          <div className="mt-1 text-[12px] text-ink-3">{meta}</div>
         </div>
       </Link>
     </div>
