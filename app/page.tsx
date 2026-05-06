@@ -10,7 +10,7 @@ import {
 export default function HomePage() {
   return (
     <main className="flex flex-col flex-1">
-      <header className="px-6 pt-8 pb-2 md:pt-16 md:pb-4">
+      <header className="px-6 pt-8 pb-2 md:px-10 md:pt-8 md:pb-4">
         <div className="md:max-w-2xl">
           <h1 className="font-serif text-[34px] leading-[1.05] tracking-tight text-ink md:text-[56px]">
             Klatre i Norge
