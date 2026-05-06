@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import type { Crag } from "@/types/crag";
-import { ExploreBottomSheet } from "./ExploreBottomSheet";
+import { MapPreviewSheet } from "./MapPreviewSheet";
 
 type Props = {
   crags: Crag[];
@@ -41,7 +41,6 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
           opacity={0.85}
         />
         <FitBoundsOnce crags={crags} />
-        <FlyTo crag={selected} />
         {crags.map((c) => (
           <CragMarker
             key={c.id}
@@ -50,11 +49,13 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
             onSelect={() => onSelect(c.id)}
           />
         ))}
+        {selected && (
+          <MapPreviewSheet
+            crag={selected}
+            onClose={() => onSelect(null)}
+          />
+        )}
       </MapContainer>
-
-      {selected && (
-        <ExploreBottomSheet crag={selected} onClose={() => onSelect(null)} />
-      )}
     </div>
   );
 }
@@ -71,15 +72,6 @@ function FitBoundsOnce({ crags }: { crags: Crag[] }) {
     map.fitBounds(bounds, { padding: [60, 60], maxZoom: 9 });
     fitted.current = true;
   }, [map, crags]);
-  return null;
-}
-
-function FlyTo({ crag }: { crag: Crag | null }) {
-  const map = useMap();
-  useEffect(() => {
-    if (!crag) return;
-    map.flyTo([crag.location.lat, crag.location.lng], 11, { duration: 0.6 });
-  }, [crag?.id, map]);
   return null;
 }
 
