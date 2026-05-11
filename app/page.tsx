@@ -2,6 +2,8 @@ import { fixtureCrags } from "@/lib/fixtures/crags";
 import { HomeView, type CragWeatherMap } from "@/components/home/HomeView";
 import { fetchForecast } from "@/lib/met/forecast";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const weatherEntries = await Promise.all(
     fixtureCrags.map(async (c) => {

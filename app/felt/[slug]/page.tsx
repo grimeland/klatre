@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { fixtureCrags, getCragBySlug } from "@/lib/fixtures/crags";
+import { getCragBySlug } from "@/lib/fixtures/crags";
 import {
   formatDistance,
   formatGradeRange,
@@ -19,9 +19,7 @@ import { fetchForecast } from "@/lib/met/forecast";
 import { estimateSunOnCrag, formatHHMMOslo } from "@/lib/sun/estimate";
 import type { CragImage, Route } from "@/types/crag";
 
-export async function generateStaticParams() {
-  return fixtureCrags.map((c) => ({ slug: c.slug }));
-}
+export const dynamic = "force-dynamic";
 
 type Params = Promise<{ slug: string }>;
 
