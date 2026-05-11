@@ -12,9 +12,12 @@ type Status =
 export function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/";
+  const urlError = params.get("error");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [status, setStatus] = useState<Status>(
+    urlError ? { kind: "error", message: urlError } : { kind: "idle" },
+  );
   const [pending, startTransition] = useTransition();
 
   function handleSubmit(e: React.FormEvent) {
