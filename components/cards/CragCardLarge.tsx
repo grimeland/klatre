@@ -1,15 +1,21 @@
 import Link from "next/link";
 import type { Crag } from "@/types/crag";
 import { formatDistance } from "@/lib/utils/format";
-import { DrynessBadge } from "@/components/ui/DrynessBadge";
 import { HeartButton } from "@/components/ui/HeartButton";
+
+type CragWeatherBadge = {
+  emoji: string;
+  label: string;
+  score: number;
+};
 
 type Props = {
   crag: Crag;
+  weather?: CragWeatherBadge;
   onSelect?: () => void;
 };
 
-export function CragCardLarge({ crag, onSelect }: Props) {
+export function CragCardLarge({ crag, weather, onSelect }: Props) {
   const isBouldering = crag.climbingTypes.includes("buldring");
   const itemLabel = isBouldering ? "problemer" : "ruter";
   const climbingLabel = crag.climbingTypes
@@ -26,14 +32,28 @@ export function CragCardLarge({ crag, onSelect }: Props) {
     .filter(Boolean)
     .join(" · ");
 
+  const heroImage = crag.images?.[0];
+  const heroStyle = heroImage?.url
+    ? {
+        backgroundImage: `url(${heroImage.url})`,
+        backgroundSize: "cover" as const,
+        backgroundPosition: "center" as const,
+      }
+    : undefined;
+  const heroClass = heroImage?.url ? "" : `crag-img-${crag.imageId}`;
+
   const inner = (
     <>
       <div
-        className={`relative aspect-[5/4] overflow-hidden rounded-2xl crag-img-${crag.imageId}`}
+        className={`relative aspect-[5/4] overflow-hidden rounded-2xl ${heroClass}`}
+        style={heroStyle}
       >
-        <div className="absolute left-3 top-3">
-          <DrynessBadge dryness={crag.dryness} />
-        </div>
+        {weather && (
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[12px] font-semibold text-ink shadow-sm backdrop-blur-sm">
+            <span aria-hidden>{weather.emoji}</span>
+            <span>{weather.label}</span>
+          </div>
+        )}
         <div className="absolute right-3 top-3">
           <HeartButton />
         </div>

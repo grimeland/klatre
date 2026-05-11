@@ -134,12 +134,22 @@ function PreviewCard({
       : null;
   const gradeLabel = avgGrade ? `⌀ ${avgGrade}` : gradeRange;
 
+  const heroImage = crag.images?.[0];
+  const heroStyle = heroImage?.url
+    ? {
+        backgroundImage: `url(${heroImage.url})`,
+        backgroundSize: "cover" as const,
+        backgroundPosition: "center" as const,
+      }
+    : undefined;
+  const heroClass = heroImage?.url ? "" : `crag-img-${crag.imageId}`;
+
   return (
     <Link
       href={`/felt/${crag.slug}`}
       className="block overflow-hidden rounded-2xl bg-card shadow-2xl"
     >
-      <div className={`relative aspect-[5/4] crag-img-${crag.imageId}`}>
+      <div className={`relative aspect-[5/4] ${heroClass}`} style={heroStyle}>
         <button
           type="button"
           aria-label="Lagre"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import type { Crag } from "@/types/crag";
@@ -14,11 +14,48 @@ type Props = {
 
 const OSLO: [number, number] = [59.9139, 10.7522];
 
+type GeoStatus = "idle" | "requesting" | "granted" | "denied" | "unavailable";
+
+function useGeolocation() {
+  const [coords, setCoords] = useState<[number, number] | null>(null);
+  const [status, setStatus] = useState<GeoStatus>("idle");
+
+  const request = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      console.warn("[Felt] geolocation: navigator.geolocation unavailable");
+      setStatus("unavailable");
+      return;
+    }
+    console.log("[Felt] geolocation: requesting position…");
+    setStatus("requesting");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        console.log("[Felt] geolocation: granted", pos.coords);
+        setCoords([pos.coords.latitude, pos.coords.longitude]);
+        setStatus("granted");
+      },
+      (err) => {
+        console.warn("[Felt] geolocation: denied or failed", err.code, err.message);
+        setStatus("denied");
+      },
+      { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false },
+    );
+  };
+
+  useEffect(() => {
+    request();
+  }, []);
+
+  return { coords, status, request };
+}
+
 export function ExploreMap({ crags, selectedId, onSelect }: Props) {
   const selected = useMemo(
     () => crags.find((c) => c.id === selectedId) ?? null,
     [crags, selectedId],
   );
+  const { coords: userCoords, status: geoStatus, request: requestGeo } =
+    useGeolocation();
 
   return (
     <div className="relative h-full w-full">
@@ -40,7 +77,12 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
           maxZoom={19}
           opacity={0.85}
         />
-        <FitBoundsOnce crags={crags} />
+        <FitView crags={crags} userCoords={userCoords} />
+        <ClickToDeselect
+          hasSelection={selectedId !== null}
+          onDeselect={() => onSelect(null)}
+        />
+        {userCoords && <UserMarker coords={userCoords} />}
         {crags.map((c) => (
           <CragMarker
             key={c.id}
@@ -56,23 +98,133 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
           />
         )}
       </MapContainer>
+
+      {(geoStatus === "denied" || geoStatus === "unavailable") && (
+        <div className="absolute left-1/2 top-4 z-[400] flex -translate-x-1/2 items-center gap-3 rounded-full bg-white px-4 py-2 text-[13px] text-ink-2 shadow-lg ring-1 ring-black/5">
+          <span>
+            {geoStatus === "denied"
+              ? "Posisjon avslått — sjekk nettleser-innstillinger"
+              : "Posisjon ikke tilgjengelig"}
+          </span>
+          <button
+            type="button"
+            onClick={requestGeo}
+            className="rounded-full bg-ink px-3 py-1 text-[12px] font-semibold text-white"
+          >
+            Prøv igjen
+          </button>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={requestGeo}
+        aria-label={
+          userCoords ? "Sentrer på min posisjon" : "Bruk min posisjon"
+        }
+        className="absolute bottom-5 right-5 z-[400] flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-lg ring-1 ring-black/5 transition active:scale-95 disabled:opacity-60"
+        disabled={geoStatus === "requesting"}
+      >
+        <span
+          aria-hidden
+          className={`text-[18px] leading-none ${
+            geoStatus === "requesting" ? "animate-pulse opacity-60" : ""
+          }`}
+        >
+          📍
+        </span>
+      </button>
     </div>
   );
 }
 
-function FitBoundsOnce({ crags }: { crags: Crag[] }) {
+function ClickToDeselect({
+  hasSelection,
+  onDeselect,
+}: {
+  hasSelection: boolean;
+  onDeselect: () => void;
+}) {
   const map = useMap();
-  const fitted = useRef(false);
   useEffect(() => {
-    if (fitted.current) return;
-    if (crags.length === 0) return;
+    if (!hasSelection) return;
+    const handler = () => onDeselect();
+    map.on("click", handler);
+    return () => {
+      map.off("click", handler);
+    };
+  }, [map, hasSelection, onDeselect]);
+  return null;
+}
+
+function FitView({
+  crags,
+  userCoords,
+}: {
+  crags: Crag[];
+  userCoords: [number, number] | null;
+}) {
+  const map = useMap();
+  const lastUserCoords = useRef<string | null>(null);
+  const fittedAll = useRef(false);
+
+  useEffect(() => {
+    if (userCoords) {
+      const key = userCoords.join(",");
+      if (lastUserCoords.current === key) return;
+      lastUserCoords.current = key;
+
+      const nearestKm = crags.reduce((min, c) => {
+        const d = distanceKm(userCoords, [c.location.lat, c.location.lng]);
+        return d < min ? d : min;
+      }, Infinity);
+
+      const zoom =
+        nearestKm < 3 ? 13
+        : nearestKm < 10 ? 12
+        : nearestKm < 30 ? 11
+        : nearestKm < 80 ? 10
+        : 8;
+
+      console.log(
+        `[Felt] map: centering on user, nearest crag ${nearestKm.toFixed(1)} km, zoom ${zoom}`,
+      );
+      map.flyTo(userCoords, zoom, { duration: 0.8 });
+      return;
+    }
+
+    if (fittedAll.current || crags.length === 0) return;
     const bounds = L.latLngBounds(
       crags.map((c) => [c.location.lat, c.location.lng] as [number, number]),
     );
     map.fitBounds(bounds, { padding: [60, 60], maxZoom: 9 });
-    fitted.current = true;
-  }, [map, crags]);
+    fittedAll.current = true;
+  }, [map, crags, userCoords]);
+
   return null;
+}
+
+function distanceKm(a: [number, number], b: [number, number]): number {
+  const R = 6371;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(b[0] - a[0]);
+  const dLng = toRad(b[1] - a[1]);
+  const lat1 = toRad(a[0]);
+  const lat2 = toRad(b[0]);
+  const x =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+
+function UserMarker({ coords }: { coords: [number, number] }) {
+  const icon = L.divIcon({
+    className: "felt-user-pin-wrap",
+    html: '<div class="felt-user-pin"></div>',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+  });
+  return <Marker position={coords} icon={icon} interactive={false} />;
 }
 
 function CragMarker({
@@ -100,7 +252,12 @@ function CragMarker({
     <Marker
       position={[crag.location.lat, crag.location.lng]}
       icon={divIcon}
-      eventHandlers={{ click: onSelect }}
+      eventHandlers={{
+        click: (e) => {
+          L.DomEvent.stopPropagation(e);
+          onSelect();
+        },
+      }}
     />
   );
 }

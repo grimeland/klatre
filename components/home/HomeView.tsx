@@ -1,12 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Search, SlidersHorizontal, Map as MapIcon, List } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import type { Crag } from "@/types/crag";
 import { CragCardLarge } from "@/components/cards/CragCardLarge";
 import { FilterModal } from "@/components/filters/FilterModal";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import {
   DEFAULT_FILTERS,
   filterCount,
@@ -29,23 +29,39 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "weather", label: "Bra vær" },
 ];
 
-export function HomeView({ crags }: { crags: Crag[] }) {
+export type CragWeather = {
+  score: number;
+  label: string;
+  emoji: string;
+  precipNext24hMm: number;
+};
+
+export type CragWeatherMap = Record<string, CragWeather>;
+
+export function HomeView({
+  crags,
+  weather,
+}: {
+  crags: Crag[];
+  weather?: CragWeatherMap;
+}) {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") ?? "";
+  const initialFilterOpen = searchParams.get("openFilters") === "1";
+
   const [view, setView] = useState<"list" | "map">("list");
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(initialFilterOpen);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     let xs = filterCrags(crags, filters);
     if (activeTab === "nearby") xs = xs.filter((c) => c.distanceMinutes <= 90);
-    if (activeTab === "weather")
-      xs = xs.filter(
-        (c) =>
-          c.dryness.kind === "dry-cap" ||
-          (c.dryness.kind === "dry" && c.dryness.days >= 3),
-      );
+    if (activeTab === "weather") {
+      xs = xs.filter((c) => (weather?.[c.slug]?.score ?? 0) >= 60);
+    }
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       xs = xs.filter(
@@ -54,8 +70,14 @@ export function HomeView({ crags }: { crags: Crag[] }) {
           c.area.toLowerCase().includes(q),
       );
     }
+    if (activeTab === "weather") {
+      return xs.sort(
+        (a, b) =>
+          (weather?.[b.slug]?.score ?? 0) - (weather?.[a.slug]?.score ?? 0),
+      );
+    }
     return xs.sort((a, b) => a.distanceMinutes - b.distanceMinutes);
-  }, [crags, filters, activeTab, query]);
+  }, [crags, filters, activeTab, query, weather]);
 
   useEffect(() => {
     if (!filtered.find((c) => c.id === selectedId)) {
@@ -74,9 +96,9 @@ export function HomeView({ crags }: { crags: Crag[] }) {
 
   return (
     <div className="fixed inset-0 flex flex-col bg-bg">
-      <Header
+      <SiteHeader
         query={query}
-        onQuery={setQuery}
+        onQueryChange={setQuery}
         onOpenFilters={() => setFilterOpen(true)}
         filterBadge={filterBadge}
       />
@@ -94,7 +116,11 @@ export function HomeView({ crags }: { crags: Crag[] }) {
             </p>
             <div className="mt-4 grid gap-x-4 gap-y-7 md:grid-cols-2 md:gap-x-5 md:gap-y-9 lg:grid-cols-3">
               {filtered.map((c) => (
-                <CragCardLarge key={c.id} crag={c} />
+                <CragCardLarge
+                  key={c.id}
+                  crag={c}
+                  weather={weather?.[c.slug]}
+                />
               ))}
             </div>
           </div>
@@ -126,7 +152,7 @@ export function HomeView({ crags }: { crags: Crag[] }) {
         className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white shadow-lg md:hidden"
         style={{ zIndex: 1200 }}
       >
-        {view === "list" ? <MapIcon size={16} /> : <List size={16} />}
+        <span aria-hidden>{view === "list" ? "🗺" : "📋"}</span>
         {view === "list" ? "Vis kart" : "Vis liste"}
       </button>
 
@@ -138,68 +164,6 @@ export function HomeView({ crags }: { crags: Crag[] }) {
         visibleCount={filtered.length}
       />
     </div>
-  );
-}
-
-function Header({
-  query,
-  onQuery,
-  onOpenFilters,
-  filterBadge,
-}: {
-  query: string;
-  onQuery: (s: string) => void;
-  onOpenFilters: () => void;
-  filterBadge: number;
-}) {
-  return (
-    <header className="flex flex-shrink-0 items-center gap-3 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:px-8 md:py-4">
-      <Link
-        href="/"
-        className="flex-shrink-0 font-serif text-[22px] tracking-tight text-ink md:text-[28px]"
-      >
-        Felt
-      </Link>
-
-      <div className="flex flex-1 items-center gap-2 md:max-w-xl">
-        <label
-          htmlFor="felt-search"
-          className="flex flex-1 items-center gap-2.5 rounded-full border border-line bg-card px-4 py-2 shadow-sm focus-within:border-ink"
-        >
-          <Search size={16} className="text-ink-2" />
-          <input
-            id="felt-search"
-            type="search"
-            value={query}
-            onChange={(e) => onQuery(e.target.value)}
-            placeholder="Søk i felt"
-            className="flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-3"
-          />
-        </label>
-
-        <button
-          type="button"
-          onClick={onOpenFilters}
-          aria-label="Filtre"
-          className="relative flex items-center gap-2 rounded-full border border-line bg-card px-3 py-2 text-[13px] font-medium text-ink-2 hover:border-ink md:px-4"
-        >
-          <SlidersHorizontal size={16} />
-          <span className="hidden md:inline">Filtre</span>
-          {filterBadge > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-[10px] font-bold text-white">
-              {filterBadge}
-            </span>
-          )}
-        </button>
-      </div>
-
-      <Link
-        href="/profil"
-        className="hidden flex-shrink-0 rounded-full border border-line bg-card px-4 py-2 text-[13px] font-medium text-ink md:inline-flex"
-      >
-        Logg inn
-      </Link>
-    </header>
   );
 }
 

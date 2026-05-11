@@ -1,13 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import {
-  Sun,
-  Footprints,
-  Users,
-  Sunrise,
-  X,
-} from "lucide-react";
 import type { ClimbingType, Exposure, RockType } from "@/types/crag";
 import {
   DEFAULT_FILTERS,
@@ -28,14 +21,14 @@ type Props = {
 const RECOMMENDED: {
   id: string;
   label: string;
-  Icon: typeof Sun;
+  emoji: string;
   apply: (f: FilterState) => FilterState;
   isOn: (f: FilterState) => boolean;
 }[] = [
   {
     id: "dry-now",
     label: "Tørt nå",
-    Icon: Sun,
+    emoji: "☀",
     apply: (f) => ({
       ...f,
       conditions: f.conditions === "dry-now" ? "any" : "dry-now",
@@ -45,21 +38,21 @@ const RECOMMENDED: {
   {
     id: "easy-approach",
     label: "Lett innsteg",
-    Icon: Footprints,
+    emoji: "🥾",
     apply: (f) => toggleFeature(f, "easy-approach"),
     isOn: (f) => f.features.has("easy-approach"),
   },
   {
     id: "family",
     label: "Familievennlig",
-    Icon: Users,
+    emoji: "👨‍👩‍👧",
     apply: (f) => toggleFeature(f, "family-friendly"),
     isOn: (f) => f.features.has("family-friendly"),
   },
   {
     id: "south",
     label: "Sør-vendt",
-    Icon: Sunrise,
+    emoji: "🌅",
     apply: (f) => toggleExposure(f, "S"),
     isOn: (f) => f.exposure.has("S"),
   },
@@ -184,7 +177,7 @@ export function FilterModal({
             onClick={onClose}
             className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-ink hover:bg-zinc-100"
           >
-            <X size={18} />
+            <span aria-hidden className="text-[18px] leading-none">✕</span>
           </button>
         </header>
 
@@ -204,7 +197,7 @@ export function FilterModal({
                         : "border-line"
                     }`}
                   >
-                    <r.Icon size={24} className="text-ink" />
+                    <span aria-hidden className="text-[26px] leading-none">{r.emoji}</span>
                     <span className="text-[12px] leading-tight text-ink">
                       {r.label}
                     </span>

@@ -37,6 +37,19 @@ export type Route = {
   type: "sport" | "trad" | "buldring";
   ascents: number;
   isClassic: boolean;
+  sector?: string;
+  faYear?: number;
+  faBy?: string;
+  description?: string;
+};
+
+export type CragImage = {
+  url?: string;
+  placeholderId?: 1 | 2 | 3 | 4 | 5 | 6;
+  photographer?: string;
+  license?: string;
+  sourceUrl?: string;
+  alt?: string;
 };
 
 export type Crag = {
@@ -66,4 +79,5 @@ export type Crag = {
   location: LatLng;
   imageId: 1 | 2 | 3 | 4 | 5 | 6;
   galleryImageIds: (1 | 2 | 3 | 4 | 5 | 6)[];
+  images?: CragImage[];
 };

@@ -74,6 +74,7 @@ type SeedCrag = {
   routes?: Route[];
   imageId?: Crag["imageId"];
   galleryImageIds?: Crag["galleryImageIds"];
+  images?: Crag["images"];
 };
 
 const seeds: SeedCrag[] = [
@@ -83,41 +84,57 @@ const seeds: SeedCrag[] = [
     slug: "kolsas",
     name: "Kolsås",
     area: "Bærum",
-    location: { lat: 59.9168, lng: 10.5375 },
-    climbingTypes: ["sport", "trad"],
+    location: { lat: 59.91223, lng: 10.52054 },
+    climbingTypes: ["trad", "sport"],
     rockType: "Gneis",
     description:
-      "Oslo og omegns mest tradisjonsrike klippe og Norges eldste klatrefelt. Består av craggene Øvre Sydstup, Østveggen, Nedre Sydstup og Den Skjulte Veggen.",
-    routeCount: 120,
-    gradeLow: "3",
-    gradeHigh: "7c",
+      "Oslo og omegns mest tradisjonsrike klippe og Norges eldste klatrefelt, med klatring tilbake til 1904. Tre hoveddeler: Øvre Sydstup (42 ruter, sport-rebolted og trad), Østveggen (lange flerlengders trad opp basaltveggen, 50+ ruter) og Kjempesvapartiet (kortere ruter på sva, 30 ruter).",
+    routeCount: 122,
+    gradeLow: "2",
+    gradeHigh: "8+",
     exposure: ["S", "V"],
-    approachMinutes: 10,
-    parkingNote: "Kolsåstoppen P-plass, plass til 25 biler",
-    approachNote: "10 min, lett sti opp fra parkeringen",
-    exposureNote: "Sør- og vestvendt, sol fra kl. 10",
+    approachMinutes: 30,
+    parkingNote: "Parkering ved Kolsåshytta. GPS 59.91223, 10.52054.",
+    approachNote: "30 min sti opp til Øvre Sydstup og Østveggen.",
+    exposureNote: "Sør- og vestvendt. Sol 8–21 om sommeren.",
     seasonNote: "April – november",
     accessNote: "Fri ferdsel, ingen avgift",
-    localClub: "Bærum Klatreklubb",
+    localClub: "Kolsås IF Klatregruppe (KIF)",
+    images: [
+      {
+        url: "/images/crags/kolsas/stupene.jpg",
+        photographer: "Far min",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Kols%C3%A5sstupene.jpg",
+        alt: "Kolsåsstupene — selve klatreveggen",
+      },
+      {
+        url: "/images/crags/kolsas/drone.jpg",
+        photographer: "Tarjei Mo",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Kols%C3%A5stoppen_from_drone.jpg",
+        alt: "Kolsås sett fra drone",
+      },
+      {
+        url: "/images/crags/kolsas/fra-vest.jpg",
+        photographer: "SOA",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Kols%C3%A5stoppen_fra_vest.JPG",
+        alt: "Kolsåstoppen sett fra vest",
+      },
+      {
+        url: "/images/crags/kolsas/toppen.jpg",
+        photographer: "Chell Hill",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Kols%C3%A5stoppen.jpg",
+        alt: "Kolsåstoppen, landskap",
+      },
+    ],
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
     galleryImageIds: [1, 3, 5, 2, 4, 6],
     imageId: 1,
-  },
-  {
-    id: "sondre-kolsas",
-    slug: "sondre-kolsas",
-    name: "Søndre Kolsås",
-    area: "Bærum",
-    location: { lat: 59.9099, lng: 10.5301 },
-    climbingTypes: ["sport", "trad"],
-    description:
-      "Søndre del av Kolsås-massivet, med utsiktspunkt og flere klatreflater i samme område.",
-    exposure: ["S"],
-    dryness: { kind: "dry", days: 4 },
-    drynessTimeline: dryTimeline,
-    weatherNext3Days: generic3Day,
   },
   {
     id: "hauktjern",
@@ -143,6 +160,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 2 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/hauktjern/cliff.jpg",
+        photographer: "GAD",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Air_ostmarka.jpg",
+        alt: "Østmarka fra luften",
+      },
+    ],
   },
   {
     id: "damtjern",
@@ -171,6 +197,15 @@ const seeds: SeedCrag[] = [
     routes: damtjernRoutes,
     galleryImageIds: [3, 1, 5, 2, 4, 6],
     imageId: 3,
+    images: [
+      {
+        url: "/images/crags/damtjern/cliff.jpg",
+        photographer: "Mahlum",
+        license: "Public Domain",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Randsfjorden_fra_Jevnaker.jpg",
+        alt: "Randsfjorden fra Jevnaker, Hadeland",
+      },
+    ],
   },
   {
     id: "skadalen",
@@ -187,6 +222,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 2 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/skadalen/cliff.jpg",
+        photographer: "Geir Hval",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Maridalen_Maridalsvannet_Nordmarka_Oslo_Norway_(2022.07.11).jpg",
+        alt: "Maridalsvannet i Nordmarka",
+      },
+    ],
   },
   {
     id: "hellerud",
@@ -201,6 +245,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/hellerud/cliff.jpg",
+        photographer: "Kjetil Ree",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Hellerud_(17._mars_2018).jpg",
+      },
+    ],
   },
   {
     id: "skullerud",
@@ -212,6 +264,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/skullerud/cliff.jpg",
+        photographer: "Kjetil Ree",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Lutdalen_-_2014-06-09_at_15-29-44.jpg",
+        alt: "Lutdalen i Østmarka",
+      },
+    ],
   },
   {
     id: "isdammen",
@@ -223,6 +284,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/isdammen/cliff.jpg",
+        photographer: "Flladina",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:A_summer_day_at_Sognsvann.JPG",
+        alt: "Sognsvann en sommerdag",
+      },
+    ],
   },
   {
     id: "grefsenkollen",
@@ -236,6 +306,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/grefsenkollen/cliff.jpg",
+        photographer: "Widerøes Flyveselskap / Otto Hansen / Oslo Byarkiv",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Grefsenkollen.jpg",
+      },
+    ],
   },
   {
     id: "vardasen",
@@ -251,6 +329,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/vardasen/cliff.jpg",
+        photographer: "Bjoertvedt",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Asker_Vardaasen_IMG_8709.jpg",
+      },
+    ],
   },
   {
     id: "sorkedalen",
@@ -272,6 +358,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/sorkedalen/cliff.jpg",
+        photographer: "Bjoertvedt",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Soerkedalen05.jpg",
+      },
+    ],
   },
 
   // Drammen / Lier / Røyken — innenfor 1 t fra Oslo
@@ -290,6 +384,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/gullaug/cliff.jpg",
+        photographer: "Peulle",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Drammensfjorden_Lier_oktober_2017.jpg",
+        alt: "Drammensfjorden ved Lier",
+      },
+    ],
   },
   {
     id: "ytre-lahell",
@@ -305,6 +408,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/ytre-lahell/cliff.jpg",
+        photographer: "Peulle",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Drammensfjorden_Lier_oktober_2017.jpg",
+        alt: "Drammensfjorden ved Lier",
+      },
+    ],
   },
   {
     id: "hyggen",
@@ -319,6 +431,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/hyggen/cliff.png",
+        photographer: "Kjetil Lenes",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Hyggen.png",
+      },
+    ],
   },
   {
     id: "hammern",
@@ -333,6 +453,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/hammern/cliff.jpg",
+        photographer: "Tommy Gildseth",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Frogner_i_S%C3%B8rum.jpg",
+        alt: "Frogner i Sørum",
+      },
+    ],
   },
   {
     id: "hamre",
@@ -346,6 +475,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/hamre/cliff.jpg",
+        photographer: "Rüdiger Müller",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Wappen_Felswand_Kongsberg.jpg",
+        alt: "Klippe i Kongsberg-området",
+      },
+    ],
   },
 
   // Telemark / Sørlandet
@@ -375,6 +513,14 @@ const seeds: SeedCrag[] = [
     weatherNext3Days: generic3Day,
     galleryImageIds: [6, 2, 4, 1],
     imageId: 6,
+    images: [
+      {
+        url: "/images/crags/haegefjell/cliff.jpg",
+        photographer: "Bjoertvedt",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Nissedal_Kviteseid_IMG_2454_nisser_from_east_Skaggen_490m_H%C3%A4gefj_1021m_Lauvlundnuten_654m.JPG",
+      },
+    ],
   },
   {
     id: "reskjem",
@@ -389,6 +535,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry-cap" },
     drynessTimeline: drySevenDays,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/reskjem/cliff.jpg",
+        photographer: "Rémih",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Omnesfossen.jpg",
+        alt: "Omnesfossen i Hjartdal, Telemark",
+      },
+    ],
   },
   {
     id: "gygrestolen",
@@ -402,6 +557,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 5 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/gygrestolen/cliff.jpg",
+        photographer: "Olavfin",
+        license: "Public Domain",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:T%C3%A5ke_over_Nordsj%C3%B8.jpg",
+        alt: "Tåke over Nordsjø, Bø i Telemark",
+      },
+    ],
   },
   {
     id: "sjoveggen",
@@ -415,6 +579,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/sjoveggen/cliff.jpg",
+        photographer: "Nasjonalbiblioteket",
+        license: "Public Domain",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:4594_Hank%C3%B8._Vabukten_-_no-nb_digifoto_20151106_00080_bldsa_PK06721.jpg",
+        alt: "Hankø, Vabukten (historisk)",
+      },
+    ],
   },
   {
     id: "sandefjord-2023",
@@ -427,6 +600,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/sandefjord-2023/cliff.jpg",
+        photographer: "Øyvind Holmstad",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Sandefjord_sett_fra_havet.JPG",
+        alt: "Sandefjord sett fra havet",
+      },
+    ],
   },
 
   // Vestlandet
@@ -443,6 +625,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/uskedalen/cliff.jpg",
+        photographer: "Tomasz Halszka",
+        license: "CC BY-SA 2.5",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Uskedalen02.jpg",
+      },
+    ],
   },
   {
     id: "drangsneset",
@@ -458,6 +648,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 3 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/drangsneset/cliff.jpg",
+        photographer: "Frokor",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Bj%C3%B8rnafjorden.JPG",
+        alt: "Bjørnafjorden",
+      },
+    ],
   },
 
   // Sverige (Bohuslän)
@@ -472,6 +671,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/valserod/cliff.jpg",
+        photographer: "Carl Curman (ca. 1865)",
+        license: "Public Domain",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Bratt%C3%B6n,_Bohusl%C3%A4n,_Sweden_(3409571954).jpg",
+        alt: "Bohuslän, Brattön",
+      },
+    ],
   },
 
   // Trøndelag
@@ -488,6 +696,15 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "dry", days: 4 },
     drynessTimeline: dryTimeline,
     weatherNext3Days: generic3Day,
+    images: [
+      {
+        url: "/images/crags/ishoel/cliff.jpg",
+        photographer: "Håvard Berland",
+        license: "CC BY-SA 1.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:OppdalFromAlmannberget.jpg",
+        alt: "Oppdal sett fra Allmannberget",
+      },
+    ],
   },
 
   // Nordland — fjelltopper / multipitch
@@ -504,6 +721,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "unknown" },
     drynessTimeline: [],
     weatherNext3Days: [],
+    images: [
+      {
+        url: "/images/crags/stetind/cliff.jpg",
+        photographer: "ZorroIII",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Stetind_2009_1.JPG",
+      },
+    ],
   },
   {
     id: "svolvargeita",
@@ -518,6 +743,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "unknown" },
     drynessTimeline: [],
     weatherNext3Days: [],
+    images: [
+      {
+        url: "/images/crags/svolvargeita/cliff.jpg",
+        photographer: "Whozha",
+        license: "CC BY-SA 4.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Svolv%C3%A6rgeita_sunny.jpg",
+      },
+    ],
   },
   {
     id: "hamaroyskaftet",
@@ -530,6 +763,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "unknown" },
     drynessTimeline: [],
     weatherNext3Days: [],
+    images: [
+      {
+        url: "/images/crags/hamaroyskaftet/cliff.jpg",
+        photographer: "TorbjørnS",
+        license: "CC0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Hamar%C3%B8yskaftet01.JPG",
+      },
+    ],
   },
 
   // Møre og Romsdal — fjelltopper
@@ -545,6 +786,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "unknown" },
     drynessTimeline: [],
     weatherNext3Days: [],
+    images: [
+      {
+        url: "/images/crags/romsdalshornet/cliff.jpg",
+        photographer: "Snalwibma",
+        license: "CC BY-SA 3.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Romsdalshorn_reflection.jpg",
+      },
+    ],
   },
   {
     id: "innerdalstarnet",
@@ -556,6 +805,14 @@ const seeds: SeedCrag[] = [
     dryness: { kind: "unknown" },
     drynessTimeline: [],
     weatherNext3Days: [],
+    images: [
+      {
+        url: "/images/crags/innerdalstarnet/cliff.jpg",
+        photographer: "color line",
+        license: "CC BY 2.0",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Innerdalst%C3%A5rnet.jpg",
+      },
+    ],
   },
 ];
 
@@ -590,6 +847,7 @@ export const fixtureCrags: Crag[] = seeds.map((s, idx) => {
     galleryImageIds:
       s.galleryImageIds ??
       ([imageId, ((imageId % 6) + 1) as Crag["imageId"]] as Crag["galleryImageIds"]),
+    images: s.images,
   };
 });
 
