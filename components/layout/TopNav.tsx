@@ -8,7 +8,10 @@ export function TopNav() {
   const hidden =
     pathname === "/" ||
     pathname?.startsWith("/felt/") ||
-    pathname?.startsWith("/utforsk");
+    pathname?.startsWith("/utforsk") ||
+    pathname === "/profil" ||
+    pathname === "/lagret" ||
+    pathname === "/logg-inn";
   if (hidden) return null;
 
   return (

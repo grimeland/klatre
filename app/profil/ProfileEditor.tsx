@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/app/actions/profile";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 type Props = {
   email: string;
@@ -132,13 +133,16 @@ export function ProfileEditor({
           </p>
         )}
       </div>
-      <button
-        type="button"
-        onClick={() => setEditing(true)}
-        className="flex-none rounded-full border border-line bg-card px-4 py-2 text-[13px] font-medium text-ink"
-      >
-        Rediger
-      </button>
+      <div className="flex flex-none flex-col items-end gap-2">
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="rounded-full border border-line bg-card px-4 py-2 text-[13px] font-medium text-ink"
+        >
+          Rediger
+        </button>
+        <LogoutButton />
+      </div>
     </div>
   );
 }
