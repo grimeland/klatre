@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CragImage } from "@/types/crag";
@@ -70,14 +69,7 @@ export function Gallery({
         ))}
       </div>
 
-      <div className="absolute left-3 right-3 top-3 z-20 flex justify-between md:left-5 md:right-5 md:top-5">
-        <Link
-          href="/"
-          aria-label="Tilbake"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-md ring-1 ring-black/5 md:h-11 md:w-11"
-        >
-          <ChevronLeft size={20} />
-        </Link>
+      <div className="absolute right-3 top-3 z-20 md:right-5 md:top-5">
         <SaveCragButton
           cragSlug={cragSlug}
           isAuthenticated={isAuthenticated}
