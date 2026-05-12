@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import type { Route } from "@/types/crag";
+import type { RouteTick } from "@/lib/logbook/load";
+import { RouteSheet } from "@/components/logbook/RouteSheet";
 
 const TABS = [
   { id: "all", label: "Alle", min: 0, max: 99 },
@@ -14,9 +16,25 @@ const TABS = [
 
 const COLLAPSED_LIMIT_PER_SECTOR = 6;
 
-export function RouteList({ routes }: { routes: Route[] }) {
+export type RouteListLogbook = {
+  isAuthenticated: boolean;
+  tickedRouteIds: Set<string>;
+  projectRouteIds: Set<string>;
+  ticksByRoute: Map<string, RouteTick[]>;
+};
+
+export function RouteList({
+  routes,
+  cragSlug,
+  logbook,
+}: {
+  routes: Route[];
+  cragSlug: string;
+  logbook: RouteListLogbook;
+}) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("all");
   const [expandedSectors, setExpandedSectors] = useState<Set<string>>(new Set());
+  const [activeRoute, setActiveRoute] = useState<Route | null>(null);
 
   const filtered = useMemo(() => {
     return routes.filter((r) => {
@@ -116,39 +134,64 @@ export function RouteList({ routes }: { routes: Route[] }) {
             )}
 
             <div className="rounded-2xl bg-card p-1.5 md:p-2">
-              {visibleRoutes.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  className="flex w-full items-center gap-3 px-3 py-3 text-left transition active:bg-bg"
-                >
-                  <span
-                    aria-label={`${r.stars} stjerner`}
-                    className="w-9 flex-none text-[11px] tracking-tighter text-sun"
+              {visibleRoutes.map((r) => {
+                const ticked = logbook.tickedRouteIds.has(r.id);
+                const project = logbook.projectRouteIds.has(r.id);
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setActiveRoute(r)}
+                    className="flex w-full items-center gap-3 px-3 py-3 text-left transition active:bg-bg"
                   >
-                    {"★".repeat(r.stars) || "·"}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[14px] font-medium text-ink">
-                      {r.name}
-                      {r.isClassic && (
-                        <span className="ml-2 text-[10px] font-bold tracking-wider text-primary">
-                          Klassiker
+                    <span
+                      aria-label={ticked ? "Tikket" : project ? "Prosjekt" : `${r.stars} stjerner`}
+                      className="w-9 flex-none text-[11px] tracking-tighter"
+                    >
+                      {ticked ? (
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M5 12l5 5L20 7"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      ) : project ? (
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-ink">
+                          <span className="block h-2 w-2 rounded-full bg-ink" />
+                        </span>
+                      ) : (
+                        <span className="text-sun">
+                          {"★".repeat(r.stars) || "·"}
                         </span>
                       )}
                     </span>
-                    <span className="block text-[12px] text-ink-3">
-                      {r.lengthM > 0 && `${r.lengthM} m · `}
-                      {labelForType(r.type)}
-                      {r.faBy && ` · ${shortenFa(r.faBy)}`}
-                      {r.faYear && ` ${r.faYear}`}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[14px] font-medium text-ink">
+                        {r.name}
+                        {r.isClassic && (
+                          <span className="ml-2 text-[10px] font-bold tracking-wider text-primary">
+                            Klassiker
+                          </span>
+                        )}
+                      </span>
+                      <span className="block text-[12px] text-ink-3">
+                        {r.lengthM > 0 && `${r.lengthM} m · `}
+                        {labelForType(r.type)}
+                        {r.faBy && ` · ${shortenFa(r.faBy)}`}
+                        {r.faYear && ` ${r.faYear}`}
+                      </span>
                     </span>
-                  </span>
-                  <span className="font-mono flex-none rounded-lg bg-bg px-2.5 py-1.5 text-[12px] font-bold tracking-tight text-ink">
-                    {r.grade}
-                  </span>
-                </button>
-              ))}
+                    <span className="font-mono flex-none rounded-lg bg-bg px-2.5 py-1.5 text-[12px] font-bold tracking-tight text-ink">
+                      {r.grade}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {hidden > 0 && (
@@ -172,6 +215,18 @@ export function RouteList({ routes }: { routes: Route[] }) {
           </section>
         );
       })}
+
+      {activeRoute && (
+        <RouteSheet
+          open
+          onClose={() => setActiveRoute(null)}
+          route={activeRoute}
+          cragSlug={cragSlug}
+          isAuthenticated={logbook.isAuthenticated}
+          isProject={logbook.projectRouteIds.has(activeRoute.id)}
+          ticks={logbook.ticksByRoute.get(activeRoute.id) ?? []}
+        />
+      )}
     </div>
   );
 }

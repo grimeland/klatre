@@ -17,6 +17,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { mapRouteRow } from "@/lib/supabase/mappers";
 import { fetchForecast } from "@/lib/met/forecast";
 import { estimateSunOnCrag, formatHHMMOslo } from "@/lib/sun/estimate";
+import { loadLogbookForCrag } from "@/lib/logbook/load";
+import { SaveCragButton } from "@/components/logbook/SaveCragButton";
 import type { CragImage, Route } from "@/types/crag";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +50,10 @@ export default async function CragDetailPage({ params }: { params: Params }) {
     fetchForecast(crag.location.lat, crag.location.lng),
   ]);
   const routes = supabaseRoutes.length > 0 ? supabaseRoutes : crag.routes;
+  const logbook = await loadLogbookForCrag(
+    slug,
+    routes.map((r) => r.id),
+  );
   const sun = estimateSunOnCrag(
     crag.location.lat,
     crag.location.lng,
@@ -102,12 +108,21 @@ export default async function CragDetailPage({ params }: { params: Params }) {
 
       <div className="px-6 pt-6 pb-32 md:px-10 md:pt-10 md:grid md:grid-cols-[1fr_360px] md:gap-12 md:pb-16">
         <div>
-          <h1 className="font-serif text-[30px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
-            {crag.name}
-          </h1>
-          <p className="mt-1 text-[14px] text-ink-2 md:text-[15px]">
-            {crag.area} · {formatDistance(crag.distanceMinutes)} fra deg
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="font-serif text-[30px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
+                {crag.name}
+              </h1>
+              <p className="mt-1 text-[14px] text-ink-2 md:text-[15px]">
+                {crag.area} · {formatDistance(crag.distanceMinutes)} fra deg
+              </p>
+            </div>
+            <SaveCragButton
+              cragSlug={slug}
+              isAuthenticated={logbook.isAuthenticated}
+              isSaved={logbook.savedCrag}
+            />
+          </div>
           {metaParts.length > 0 && (
             <p className="mt-1 text-[13px] text-ink-3 md:text-[14px]">
               {metaParts.join(" · ")}
@@ -134,7 +149,11 @@ export default async function CragDetailPage({ params }: { params: Params }) {
               <h2 className="mb-5 font-serif text-[24px] leading-tight tracking-tight text-ink md:mb-6 md:text-[30px]">
                 Alle ruter ({routes.length})
               </h2>
-              <RouteList routes={routes} />
+              <RouteList
+                routes={routes}
+                cragSlug={slug}
+                logbook={logbook}
+              />
             </div>
           )}
 
