@@ -1,14 +1,12 @@
 "use server";
 
-import { headers } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Result = { ok: true } | { ok: false; error: string };
 
-export async function requestMagicLink(
+export async function requestEmailOtp(
   email: string,
   inviteCode: string,
-  next: string,
 ): Promise<Result> {
   const trimmedEmail = email.trim().toLowerCase();
   const trimmedCode = inviteCode.trim();
@@ -28,17 +26,32 @@ export async function requestMagicLink(
     return { ok: false, error: "Feil invite-kode." };
   }
 
-  const headerStore = await headers();
-  const host = headerStore.get("host");
-  const protocol = headerStore.get("x-forwarded-proto") ?? "http";
-  const origin = host ? `${protocol}://${host}` : "";
-  const safeNext = next.startsWith("/") ? next : "/";
-  const redirectTo = `${origin}/auth/callback?next=${encodeURIComponent(safeNext)}`;
-
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithOtp({
     email: trimmedEmail,
-    options: { emailRedirectTo: redirectTo },
+    options: { shouldCreateUser: true },
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function verifyEmailOtp(
+  email: string,
+  token: string,
+): Promise<Result> {
+  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedToken = token.trim();
+
+  if (!trimmedEmail || !trimmedToken) {
+    return { ok: false, error: "Skriv inn både e-post og kode." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.verifyOtp({
+    email: trimmedEmail,
+    token: trimmedToken,
+    type: "email",
   });
 
   if (error) return { ok: false, error: error.message };
