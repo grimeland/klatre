@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { DetailHeader } from "@/components/layout/DetailHeader";
 import { ProfileCard } from "./ProfileCard";
+import { CragCardLarge } from "@/components/cards/CragCardLarge";
 import { fetchForecast } from "@/lib/met/forecast";
+import { fixtureCrags } from "@/lib/fixtures/crags";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +41,7 @@ export default async function ProfilPage() {
 
   if (!user) redirect("/logg-inn?next=/profil");
 
-  const [profileRes, ticksRes, projectsRes, savedRes] = await Promise.all([
+  const [profileRes, ticksRes, savedRes] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, display_name, username, bio, avatar_url")
@@ -54,35 +56,31 @@ export default async function ProfilPage() {
       .order("climbed_on", { ascending: false })
       .limit(50),
     supabase
-      .from("route_projects")
-      .select("started_at, routes(id, name, grade, crag_slug, crags(name))")
-      .eq("user_id", user.id)
-      .order("started_at", { ascending: false }),
-    supabase
       .from("saved_crags")
-      .select("crag_slug, crags(slug, name, area, lat, lng)")
+      .select("crag_slug")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
   ]);
 
   const profile = profileRes.data;
   const ticks = ticksRes.data ?? [];
-  const projects = projectsRes.data ?? [];
   const saved = savedRes.data ?? [];
 
-  // Pull weather for each saved crag in parallel
+  // Pair each saved slug with the full fixture Crag so we can render
+  // the same large card the home page uses. Skip any slug that no
+  // longer matches a fixture (data drift between DB and fixtures).
+  const savedCrags = saved
+    .map((s) => fixtureCrags.find((c) => c.slug === s.crag_slug))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
   const savedWithWeather = await Promise.all(
-    saved.map(async (s) => {
-      const crag = single(s.crags);
-      if (!crag || crag.lat == null || crag.lng == null) {
-        return { crag, weather: null };
-      }
-      const weather = await fetchForecast(crag.lat, crag.lng);
+    savedCrags.map(async (crag) => {
+      const w = await fetchForecast(crag.location.lat, crag.location.lng);
       return {
         crag,
-        weather: weather
-          ? { label: weather.scoreLabel, emoji: weather.scoreEmoji }
-          : null,
+        weather: w
+          ? { emoji: w.scoreEmoji, label: w.scoreLabel, score: w.score }
+          : undefined,
       };
     }),
   );
@@ -182,78 +180,21 @@ export default async function ProfilPage() {
         </Section>
 
         <Section
-          title="Aktive prosjekter"
-          count={projects.length}
-          empty={projects.length === 0}
-          emptyText="Ingen aktive prosjekter."
-        >
-          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
-            {projects.map((p) => {
-              const route = single(p.routes);
-              if (!route) return null;
-              const crag = single(route.crags);
-              return (
-                <li key={route.id}>
-                  <Link
-                    href={`/felt/${route.crag_slug}`}
-                    className="flex items-center gap-3 rounded-2xl bg-card px-4 py-3"
-                  >
-                    <span className="inline-flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 border-ink">
-                      <span className="block h-2.5 w-2.5 rounded-full bg-ink" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-medium text-ink">
-                        {route.name}
-                      </p>
-                      {crag?.name && (
-                        <p className="text-[12px] text-ink-3">{crag.name}</p>
-                      )}
-                    </div>
-                    <span className="font-mono flex-none rounded-lg bg-bg px-2.5 py-1.5 text-[12px] font-bold text-ink">
-                      {route.grade}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </Section>
-
-        <Section
           title="Lagrede felt"
-          count={saved.length}
-          empty={saved.length === 0}
+          count={savedWithWeather.length}
+          empty={savedWithWeather.length === 0}
           emptyText="Du har ikke lagret noen felt."
+          emptyAction={{ label: "Bla i felt →", href: "/" }}
         >
-          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-            {savedWithWeather.map((s) => {
-              const crag = s.crag;
-              if (!crag) return null;
-              return (
-                <li key={crag.slug}>
-                  <Link
-                    href={`/felt/${crag.slug}`}
-                    className="flex items-start justify-between gap-3 rounded-2xl bg-card px-4 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-[14px] font-medium text-ink">
-                        {crag.name}
-                      </p>
-                      <p className="text-[12px] text-ink-3">{crag.area}</p>
-                    </div>
-                    {s.weather && (
-                      <span className="flex-none whitespace-nowrap rounded-full bg-bg px-2.5 py-1 text-[11px] font-medium text-ink-2">
-                        <span aria-hidden className="mr-1">
-                          {s.weather.emoji}
-                        </span>
-                        {s.weather.label}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-7 md:grid-cols-2 md:gap-x-5 md:gap-y-9 lg:grid-cols-3">
+            {savedWithWeather.map(({ crag, weather }) => (
+              <CragCardLarge
+                key={crag.slug}
+                crag={crag}
+                weather={weather}
+              />
+            ))}
+          </div>
         </Section>
       </div>
     </main>
