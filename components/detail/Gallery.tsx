@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CragImage } from "@/types/crag";
 
 export function Gallery({
@@ -29,6 +30,14 @@ export function Gallery({
   const credit = activeImage?.photographer
     ? formatCredit(activeImage)
     : null;
+
+  const hasMultiple = images.length > 1;
+
+  function scrollToIndex(i: number) {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  }
 
   return (
     <div className="relative">
@@ -80,23 +89,46 @@ export function Gallery({
         </div>
       </div>
 
+      {hasMultiple && active > 0 && (
+        <button
+          type="button"
+          onClick={() => scrollToIndex(active - 1)}
+          aria-label="Forrige bilde"
+          className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-md ring-1 ring-black/5 transition hover:scale-105 active:scale-95 md:left-5 md:h-11 md:w-11"
+        >
+          <ChevronLeft size={20} />
+        </button>
+      )}
+      {hasMultiple && active < images.length - 1 && (
+        <button
+          type="button"
+          onClick={() => scrollToIndex(active + 1)}
+          aria-label="Neste bilde"
+          className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-md ring-1 ring-black/5 transition hover:scale-105 active:scale-95 md:right-5 md:h-11 md:w-11"
+        >
+          <ChevronRight size={20} />
+        </button>
+      )}
+
       {credit && (
         <div className="absolute bottom-4 left-4 max-w-[60%] text-[11px] text-white/80 [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] md:bottom-5 md:left-6 md:text-[12px]">
           {credit}
         </div>
       )}
 
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
-        {images.map((_, i) => (
-          <span
-            key={i}
-            aria-hidden
-            className={`h-1.5 rounded-full transition-all ${
-              i === active ? "w-5 bg-white" : "w-1.5 bg-white/55"
-            }`}
-          />
-        ))}
-      </div>
+      {hasMultiple && (
+        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
+          {images.map((_, i) => (
+            <span
+              key={i}
+              aria-hidden
+              className={`h-1.5 rounded-full transition-all ${
+                i === active ? "w-5 bg-white" : "w-1.5 bg-white/55"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
