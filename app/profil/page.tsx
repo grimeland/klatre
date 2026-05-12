@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { DetailHeader } from "@/components/layout/DetailHeader";
 import { ProfileEditor } from "./ProfileEditor";
+import { AvatarUploader } from "@/components/profile/AvatarUploader";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export default async function ProfilPage() {
   const [profileRes, ticksRes, projectsRes, savedRes] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, display_name, username, bio")
+      .select("id, display_name, username, bio, avatar_url")
       .eq("id", user.id)
       .maybeSingle(),
     supabase
@@ -73,6 +74,14 @@ export default async function ProfilPage() {
     <main className="flex flex-1 flex-col">
       <DetailHeader />
       <div className="mx-auto w-full max-w-3xl px-6 pb-24 pt-8 md:px-10 md:pt-12">
+        <div className="mb-6">
+          <AvatarUploader
+            userId={user.id}
+            initialUrl={profile?.avatar_url ?? null}
+            displayName={profile?.display_name ?? ""}
+            email={user.email ?? ""}
+          />
+        </div>
         <ProfileEditor
           email={user.email ?? ""}
           initialDisplayName={profile?.display_name ?? ""}

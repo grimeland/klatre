@@ -24,7 +24,7 @@ export function TopNav() {
           className="flex-shrink-0"
         >
           <Image
-            src="/images/Felt_logo_v1.svg"
+            src="/images/Felt_logo_v2.svg"
             alt="Felt"
             width={223}
             height={77}

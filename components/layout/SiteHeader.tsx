@@ -21,15 +21,15 @@ export function SiteHeader({
   filterBadge = 0,
 }: Props) {
   return (
-    <header className="flex-shrink-0 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:px-8 md:py-4">
-      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4">
+    <header className="flex-shrink-0 border-b border-line/40 bg-bg/95 px-4 py-3 backdrop-blur md:py-4 md:pl-8 md:pr-4">
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
         <Link
           href="/"
           aria-label="Felt — forside"
           className="flex-shrink-0"
         >
           <Image
-            src="/images/Felt_logo_v1.svg"
+            src="/images/Felt_logo_v2.svg"
             alt="Felt"
             width={223}
             height={77}

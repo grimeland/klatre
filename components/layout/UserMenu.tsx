@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCurrentUser } from "@/lib/auth/useCurrentUser";
 
 function initialsFrom(name: string | null | undefined, email: string): string {
@@ -36,15 +37,29 @@ export function UserMenu() {
   const { user, profile } = state;
   const label = profile?.display_name || user.email || "Profil";
   const initials = initialsFrom(profile?.display_name, user.email ?? "");
+  const avatarUrl = profile?.avatar_url;
 
   return (
     <Link
       href="/profil"
       aria-label={`Profil (${label})`}
       title={label}
-      className="hidden h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary text-[13px] font-semibold text-primary-ink md:flex"
+      className="relative hidden h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-primary text-primary-ink md:flex"
     >
-      {initials}
+      {avatarUrl ? (
+        <Image
+          src={avatarUrl}
+          alt={label}
+          width={72}
+          height={72}
+          unoptimized
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span className="flex h-full w-full items-center justify-center text-[13px] font-semibold">
+          {initials}
+        </span>
+      )}
     </Link>
   );
 }
