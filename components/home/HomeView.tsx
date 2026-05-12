@@ -22,12 +22,12 @@ const ExploreMap = dynamic(
   },
 );
 
-type Tab = "all" | "nearby" | "weather";
-const TABS: { id: Tab; label: string }[] = [
-  { id: "all", label: "Alle felt" },
-  { id: "nearby", label: "Nær deg" },
-  { id: "weather", label: "Bra vær" },
-];
+export type Bounds = {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+};
 
 export type CragWeather = {
   score: number;
@@ -50,17 +50,16 @@ export function HomeView({
   const initialFilterOpen = searchParams.get("openFilters") === "1";
 
   const [view, setView] = useState<"list" | "map">("list");
-  const [activeTab, setActiveTab] = useState<Tab>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(initialFilterOpen);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [query, setQuery] = useState(initialQuery);
   const [mapFullscreen, setMapFullscreen] = useState(false);
+  const [bounds, setBounds] = useState<Bounds | null>(null);
 
   const filtered = useMemo(() => {
     let xs = filterCrags(crags, filters);
-    if (activeTab === "nearby") xs = xs.filter((c) => c.distanceMinutes <= 90);
-    if (activeTab === "weather") {
+    if (filters.goodWeatherOnly) {
       xs = xs.filter((c) => (weather?.[c.slug]?.score ?? 0) >= 60);
     }
     if (query.trim()) {
@@ -71,14 +70,26 @@ export function HomeView({
           c.area.toLowerCase().includes(q),
       );
     }
-    if (activeTab === "weather") {
-      return xs.sort(
-        (a, b) =>
-          (weather?.[b.slug]?.score ?? 0) - (weather?.[a.slug]?.score ?? 0),
-      );
-    }
-    return xs.sort((a, b) => a.distanceMinutes - b.distanceMinutes);
-  }, [crags, filters, activeTab, query, weather]);
+
+    const baseSort = (a: Crag, b: Crag) => {
+      if (filters.goodWeatherOnly) {
+        return (
+          (weather?.[b.slug]?.score ?? 0) - (weather?.[a.slug]?.score ?? 0)
+        );
+      }
+      return a.distanceMinutes - b.distanceMinutes;
+    };
+
+    if (!bounds) return xs.sort(baseSort);
+
+    return [...xs].sort((a, b) => {
+      const aIn = isInBounds(a, bounds);
+      const bIn = isInBounds(b, bounds);
+      if (aIn && !bIn) return -1;
+      if (!aIn && bIn) return 1;
+      return baseSort(a, b);
+    });
+  }, [crags, filters, query, weather, bounds]);
 
   useEffect(() => {
     if (!filtered.find((c) => c.id === selectedId)) {
@@ -86,13 +97,7 @@ export function HomeView({
     }
   }, [filtered, selectedId]);
 
-  const summary =
-    activeTab === "weather"
-      ? `${filtered.length} felt med bra vær`
-      : activeTab === "nearby"
-        ? `${filtered.length} felt innen 90 min fra Oslo`
-        : `${filtered.length} felt`;
-
+  const summary = `${filtered.length} felt`;
   const filterBadge = filterCount(filters);
 
   return (
@@ -103,8 +108,6 @@ export function HomeView({
         onOpenFilters={() => setFilterOpen(true)}
         filterBadge={filterBadge}
       />
-      <Tabs activeTab={activeTab} onChange={setActiveTab} />
-
       <div className="relative flex flex-1 min-h-0">
         <div
           className={`no-scrollbar overflow-y-auto transition-[width,opacity,padding] duration-300 ease-in-out ${
@@ -149,6 +152,7 @@ export function HomeView({
                 onSelect={setSelectedId}
                 isFullscreen={mapFullscreen}
                 onToggleFullscreen={() => setMapFullscreen((v) => !v)}
+                onBoundsChange={setBounds}
               />
             </div>
           </div>
@@ -176,32 +180,11 @@ export function HomeView({
   );
 }
 
-function Tabs({
-  activeTab,
-  onChange,
-}: {
-  activeTab: Tab;
-  onChange: (t: Tab) => void;
-}) {
+function isInBounds(crag: Crag, b: Bounds): boolean {
   return (
-    <div className="no-scrollbar flex flex-shrink-0 gap-2 overflow-x-auto px-4 py-3 md:px-8">
-      {TABS.map((t) => {
-        const on = t.id === activeTab;
-        return (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => onChange(t.id)}
-            className={`flex-shrink-0 rounded-full border px-4 py-1.5 text-[13px] font-medium transition ${
-              on
-                ? "border-ink bg-ink text-white"
-                : "border-line bg-card text-ink-2"
-            }`}
-          >
-            {t.label}
-          </button>
-        );
-      })}
-    </div>
+    crag.location.lat >= b.minLat &&
+    crag.location.lat <= b.maxLat &&
+    crag.location.lng >= b.minLng &&
+    crag.location.lng <= b.maxLng
   );
 }

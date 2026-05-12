@@ -26,9 +26,16 @@ const RECOMMENDED: {
   isOn: (f: FilterState) => boolean;
 }[] = [
   {
+    id: "good-weather",
+    label: "Bra vær",
+    emoji: "☀",
+    apply: (f) => ({ ...f, goodWeatherOnly: !f.goodWeatherOnly }),
+    isOn: (f) => f.goodWeatherOnly,
+  },
+  {
     id: "dry-now",
     label: "Tørt nå",
-    emoji: "☀",
+    emoji: "💨",
     apply: (f) => ({
       ...f,
       conditions: f.conditions === "dry-now" ? "any" : "dry-now",

@@ -16,6 +16,7 @@ export type FilterState = {
   exposure: Set<Exposure>;
   rockType: Set<RockType>;
   features: Set<Feature>;
+  goodWeatherOnly: boolean;
 };
 
 export const DEFAULT_FILTERS: FilterState = {
@@ -25,6 +26,7 @@ export const DEFAULT_FILTERS: FilterState = {
   exposure: new Set<Exposure>(),
   rockType: new Set<RockType>(),
   features: new Set<Feature>(),
+  goodWeatherOnly: false,
 };
 
 export function isFilterActive(f: FilterState): boolean {
@@ -34,7 +36,8 @@ export function isFilterActive(f: FilterState): boolean {
     f.maxDriveMinutes < 480 ||
     f.exposure.size > 0 ||
     f.rockType.size > 0 ||
-    f.features.size > 0
+    f.features.size > 0 ||
+    f.goodWeatherOnly
   );
 }
 
@@ -46,6 +49,7 @@ export function filterCount(f: FilterState): number {
   n += f.exposure.size;
   n += f.rockType.size;
   n += f.features.size;
+  if (f.goodWeatherOnly) n += 1;
   return n;
 }
 

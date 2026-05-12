@@ -7,12 +7,20 @@ import { Maximize2, Minus, Navigation, Plus, X } from "lucide-react";
 import type { Crag } from "@/types/crag";
 import { MapPreviewSheet } from "./MapPreviewSheet";
 
+type Bounds = {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+};
+
 type Props = {
   crags: Crag[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
+  onBoundsChange?: (bounds: Bounds) => void;
 };
 
 const OSLO: [number, number] = [59.9139, 10.7522];
@@ -58,6 +66,7 @@ export function ExploreMap({
   onSelect,
   isFullscreen = false,
   onToggleFullscreen,
+  onBoundsChange,
 }: Props) {
   const selected = useMemo(
     () => crags.find((c) => c.id === selectedId) ?? null,
@@ -88,6 +97,7 @@ export function ExploreMap({
         />
         <FitView crags={crags} userCoords={userCoords} />
         <FullscreenSync isFullscreen={isFullscreen} />
+        <BoundsTracker onBoundsChange={onBoundsChange} />
         <ClickToDeselect
           hasSelection={selectedId !== null}
           onDeselect={() => onSelect(null)}
@@ -192,6 +202,32 @@ function MapControls({
       </div>
     </div>
   );
+}
+
+function BoundsTracker({
+  onBoundsChange,
+}: {
+  onBoundsChange?: (bounds: Bounds) => void;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (!onBoundsChange) return;
+    const emit = () => {
+      const b = map.getBounds();
+      onBoundsChange({
+        minLat: b.getSouth(),
+        maxLat: b.getNorth(),
+        minLng: b.getWest(),
+        maxLng: b.getEast(),
+      });
+    };
+    map.on("moveend", emit);
+    emit();
+    return () => {
+      map.off("moveend", emit);
+    };
+  }, [map, onBoundsChange]);
+  return null;
 }
 
 function FullscreenSync({ isFullscreen }: { isFullscreen: boolean }) {
