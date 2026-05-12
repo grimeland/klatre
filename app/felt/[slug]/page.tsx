@@ -100,13 +100,13 @@ export default async function CragDetailPage({ params }: { params: Params }) {
   return (
     <main className="flex flex-col flex-1">
       <DetailHeader />
-      <div className="px-4 pt-4 md:px-8 md:pt-6">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl">
+      <div className="px-4 pt-4 md:pl-8 md:pr-4 md:pt-6">
+        <div className="overflow-hidden rounded-3xl">
           <Gallery images={galleryImages} cragName={crag.name} />
         </div>
       </div>
 
-      <div className="px-6 pt-6 pb-32 md:px-10 md:pt-10 md:grid md:grid-cols-[1fr_360px] md:gap-12 md:pb-16">
+      <div className="px-4 pt-6 pb-32 md:pl-8 md:pr-4 md:pt-10 md:grid md:grid-cols-[1fr_360px] md:gap-12 md:pb-16">
         <div>
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">

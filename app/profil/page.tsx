@@ -2,8 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { DetailHeader } from "@/components/layout/DetailHeader";
-import { ProfileEditor } from "./ProfileEditor";
-import { AvatarUploader } from "@/components/profile/AvatarUploader";
+import { ProfileCard } from "./ProfileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +14,6 @@ const STYLE_LABEL: Record<string, string> = {
   tried: "Prøvd",
 };
 
-// Supabase generator types nested FK joins as arrays even for many-to-one.
-// At runtime they come back as a single object since the FK target is a PK.
 function single<T>(rel: T | T[] | null | undefined): T | null {
   if (rel == null) return null;
   return Array.isArray(rel) ? (rel[0] ?? null) : rel;
@@ -73,30 +70,26 @@ export default async function ProfilPage() {
   return (
     <main className="flex flex-1 flex-col">
       <DetailHeader />
-      <div className="mx-auto w-full max-w-3xl px-6 pb-24 pt-8 md:px-10 md:pt-12">
-        <div className="mb-6">
-          <AvatarUploader
-            userId={user.id}
-            initialUrl={profile?.avatar_url ?? null}
-            displayName={profile?.display_name ?? ""}
-            email={user.email ?? ""}
-          />
-        </div>
-        <ProfileEditor
-          email={user.email ?? ""}
-          initialDisplayName={profile?.display_name ?? ""}
-          initialUsername={profile?.username ?? ""}
-          initialBio={profile?.bio ?? ""}
-        />
+      <div className="px-4 pb-24 pt-8 md:pl-8 md:pr-4 md:pt-12">
+        <h1 className="mb-6 font-serif text-[34px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
+          Profil
+        </h1>
 
-        <div className="mt-8 grid grid-cols-3 gap-3">
-          <Stat label="Turer" value={ticks.length} />
-          <Stat label="Prosjekter" value={projects.length} />
-          <Stat label="Lagrede felt" value={saved.length} />
-        </div>
+        <ProfileCard
+          userId={user.id}
+          email={user.email ?? ""}
+          displayName={profile?.display_name ?? ""}
+          username={profile?.username ?? ""}
+          bio={profile?.bio ?? ""}
+          avatarUrl={profile?.avatar_url ?? null}
+          tickCount={ticks.length}
+          projectCount={projects.length}
+          savedCount={saved.length}
+        />
 
         <Section
           title="Siste turer"
+          count={ticks.length}
           empty={ticks.length === 0}
           emptyText="Du har ikke logget noen turer ennå. Klikk på en rute på et felt for å logge."
         >
@@ -140,10 +133,11 @@ export default async function ProfilPage() {
 
         <Section
           title="Aktive prosjekter"
+          count={projects.length}
           empty={projects.length === 0}
           emptyText="Ingen aktive prosjekter. Marker en rute som prosjekt for å samle dem her."
         >
-          <ul className="flex flex-col gap-2">
+          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {projects.map((p) => {
               const route = single(p.routes);
               if (!route) return null;
@@ -171,10 +165,11 @@ export default async function ProfilPage() {
 
         <Section
           title="Lagrede felt"
+          count={saved.length}
           empty={saved.length === 0}
-          emptyText="Du har ikke lagret noen felt. Trykk hjertet på et feltsiden for å lagre."
+          emptyText="Du har ikke lagret noen felt. Trykk hjertet på et felt for å lagre."
         >
-          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
             {saved.map((s) => {
               const crag = single(s.crags);
               if (!crag) return null;
@@ -199,22 +194,15 @@ export default async function ProfilPage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl bg-card px-4 py-4">
-      <p className="font-serif text-[28px] leading-none text-ink">{value}</p>
-      <p className="mt-1 text-[12px] text-ink-3">{label}</p>
-    </div>
-  );
-}
-
 function Section({
   title,
+  count,
   empty,
   emptyText,
   children,
 }: {
   title: string;
+  count: number;
   empty: boolean;
   emptyText: string;
   children: React.ReactNode;
@@ -223,6 +211,11 @@ function Section({
     <section className="mt-10">
       <h2 className="mb-3 font-serif text-[22px] leading-tight tracking-tight text-ink md:text-[26px]">
         {title}
+        {!empty && (
+          <span className="ml-2 text-[16px] text-ink-3 md:text-[18px]">
+            {count}
+          </span>
+        )}
       </h2>
       {empty ? (
         <p className="rounded-2xl bg-card px-5 py-6 text-[14px] leading-relaxed text-ink-3">
