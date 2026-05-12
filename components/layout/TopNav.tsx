@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export function TopNav() {
@@ -20,9 +21,16 @@ export function TopNav() {
         <Link
           href="/"
           aria-label="Felt — forside"
-          className="font-serif text-[28px] leading-none text-ink"
+          className="flex-shrink-0"
         >
-          Felt
+          <Image
+            src="/images/Felt_logo_v1.svg"
+            alt="Felt"
+            width={223}
+            height={77}
+            priority
+            className="h-7 w-auto"
+          />
         </Link>
 
         <Link

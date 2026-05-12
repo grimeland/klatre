@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { SlidersHorizontal } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -24,9 +25,17 @@ export function SiteHeader({
       <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4">
         <Link
           href="/"
-          className="flex-shrink-0 font-serif text-[22px] tracking-tight text-ink md:text-[28px]"
+          aria-label="Felt — forside"
+          className="flex-shrink-0"
         >
-          Felt
+          <Image
+            src="/images/Felt_logo_v1.svg"
+            alt="Felt"
+            width={223}
+            height={77}
+            priority
+            className="h-6 w-auto md:h-7"
+          />
         </Link>
 
         <form

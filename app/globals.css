@@ -13,8 +13,8 @@
   --color-sun: #d89a2e;
   --color-rain: #6b8a9e;
 
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-serif: var(--font-eb-garamond), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-moderat), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-serif: var(--font-moderat), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
