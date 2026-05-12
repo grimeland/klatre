@@ -138,15 +138,11 @@ export function HomeView({
           style={{ zIndex: view === "map" ? 50 : "auto" }}
         >
           <div
-            className={`h-full w-full transition-[padding] duration-300 ease-in-out ${
-              mapFullscreen ? "" : "md:p-4 md:pl-0"
+            className={`h-full w-full transition-[padding] duration-300 ease-in-out md:p-4 ${
+              mapFullscreen ? "" : "md:pl-0"
             }`}
           >
-            <div
-              className={`h-full w-full overflow-hidden transition-[border-radius] duration-300 ease-in-out ${
-                mapFullscreen ? "" : "md:rounded-3xl"
-              }`}
-            >
+            <div className="h-full w-full overflow-hidden md:rounded-3xl">
               <ExploreMap
                 crags={filtered}
                 selectedId={selectedId}
