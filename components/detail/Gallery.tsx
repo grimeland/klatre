@@ -4,13 +4,20 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CragImage } from "@/types/crag";
+import { SaveCragButton } from "@/components/logbook/SaveCragButton";
 
 export function Gallery({
   images,
   cragName,
+  cragSlug,
+  isAuthenticated,
+  isSaved,
 }: {
   images: CragImage[];
   cragName: string;
+  cragSlug: string;
+  isAuthenticated: boolean;
+  isSaved: boolean;
 }) {
   const [active, setActive] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -63,30 +70,20 @@ export function Gallery({
         ))}
       </div>
 
-      <div className="absolute left-3 right-3 top-3 flex justify-between md:left-6 md:right-6 md:top-5">
+      <div className="absolute left-3 right-3 top-3 z-20 flex justify-between md:left-5 md:right-5 md:top-5">
         <Link
           href="/"
           aria-label="Tilbake"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink backdrop-blur-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-md ring-1 ring-black/5 md:h-11 md:w-11"
         >
-          <span aria-hidden>←</span>
+          <ChevronLeft size={20} />
         </Link>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            aria-label="Del"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink backdrop-blur-sm"
-          >
-            <span aria-hidden>↗</span>
-          </button>
-          <button
-            type="button"
-            aria-label="Lagre"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink backdrop-blur-sm"
-          >
-            <span aria-hidden>♡</span>
-          </button>
-        </div>
+        <SaveCragButton
+          cragSlug={cragSlug}
+          isAuthenticated={isAuthenticated}
+          isSaved={isSaved}
+          variant="overlay"
+        />
       </div>
 
       {hasMultiple && active > 0 && (

@@ -3,28 +3,46 @@
 import Link from "next/link";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Heart } from "lucide-react";
 import { toggleSavedCrag } from "@/app/actions/logbook";
+
+type Variant = "default" | "overlay";
+
+type Props = {
+  cragSlug: string;
+  isAuthenticated: boolean;
+  isSaved: boolean;
+  variant?: Variant;
+};
 
 export function SaveCragButton({
   cragSlug,
   isAuthenticated,
   isSaved,
-}: {
-  cragSlug: string;
-  isAuthenticated: boolean;
-  isSaved: boolean;
-}) {
+  variant = "default",
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+
+  const overlay = variant === "overlay";
+  const sizeClass = overlay ? "h-11 w-11" : "h-10 w-10";
+
+  const idleClass = overlay
+    ? "bg-white text-ink shadow-md ring-1 ring-black/5"
+    : "border border-line bg-card text-ink-2 hover:border-ink/30";
+
+  const savedClass = overlay
+    ? "bg-white text-rose-500 shadow-md ring-1 ring-black/5"
+    : "bg-primary text-primary-ink";
 
   if (!isAuthenticated) {
     return (
       <Link
         href={`/logg-inn?next=/felt/${cragSlug}`}
         aria-label="Logg inn for å lagre"
-        className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full border border-line bg-card text-ink-2 transition hover:border-ink/30"
+        className={`inline-flex flex-none items-center justify-center rounded-full transition ${sizeClass} ${idleClass}`}
       >
-        <HeartIcon filled={false} />
+        <Heart size={overlay ? 20 : 18} strokeWidth={1.8} />
       </Link>
     );
   }
@@ -44,30 +62,15 @@ export function SaveCragButton({
       disabled={pending}
       aria-pressed={isSaved}
       aria-label={isSaved ? "Fjern fra lagret" : "Lagre felt"}
-      className={`inline-flex h-10 w-10 flex-none items-center justify-center rounded-full transition disabled:opacity-60 ${
-        isSaved
-          ? "bg-primary text-primary-ink"
-          : "border border-line bg-card text-ink-2 hover:border-ink/30"
+      className={`inline-flex flex-none items-center justify-center rounded-full transition active:scale-95 disabled:opacity-60 ${sizeClass} ${
+        isSaved ? savedClass : idleClass
       }`}
     >
-      <HeartIcon filled={isSaved} />
+      <Heart
+        size={overlay ? 20 : 18}
+        strokeWidth={1.8}
+        fill={isSaved ? "currentColor" : "none"}
+      />
     </button>
-  );
-}
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-    </svg>
   );
 }

@@ -18,7 +18,6 @@ import { mapRouteRow } from "@/lib/supabase/mappers";
 import { fetchForecast } from "@/lib/met/forecast";
 import { estimateSunOnCrag, formatHHMMOslo } from "@/lib/sun/estimate";
 import { loadLogbookForCrag } from "@/lib/logbook/load";
-import { SaveCragButton } from "@/components/logbook/SaveCragButton";
 import type { CragImage, Route } from "@/types/crag";
 
 export const dynamic = "force-dynamic";
@@ -102,27 +101,24 @@ export default async function CragDetailPage({ params }: { params: Params }) {
       <DetailHeader />
       <div className="mx-auto w-full max-w-5xl px-4 pt-4 md:px-10 md:pt-6">
         <div className="overflow-hidden rounded-3xl">
-          <Gallery images={galleryImages} cragName={crag.name} />
+          <Gallery
+            images={galleryImages}
+            cragName={crag.name}
+            cragSlug={slug}
+            isAuthenticated={logbook.isAuthenticated}
+            isSaved={logbook.savedCrag}
+          />
         </div>
       </div>
 
       <div className="mx-auto w-full max-w-5xl px-4 pt-6 pb-32 md:px-10 md:pt-10 md:grid md:grid-cols-[1fr_360px] md:gap-12 md:pb-16">
         <div>
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="font-serif text-[30px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
-                {crag.name}
-              </h1>
-              <p className="mt-1 text-[14px] text-ink-2 md:text-[15px]">
-                {crag.area} · {formatDistance(crag.distanceMinutes)} fra deg
-              </p>
-            </div>
-            <SaveCragButton
-              cragSlug={slug}
-              isAuthenticated={logbook.isAuthenticated}
-              isSaved={logbook.savedCrag}
-            />
-          </div>
+          <h1 className="font-serif text-[30px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
+            {crag.name}
+          </h1>
+          <p className="mt-1 text-[14px] text-ink-2 md:text-[15px]">
+            {crag.area} · {formatDistance(crag.distanceMinutes)} fra deg
+          </p>
           {metaParts.length > 0 && (
             <p className="mt-1 text-[13px] text-ink-3 md:text-[14px]">
               {metaParts.join(" · ")}
