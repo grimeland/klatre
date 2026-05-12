@@ -43,7 +43,7 @@ export function AvatarUploader({
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    e.target.value = ""; // reset so picking same file again retriggers
+    e.target.value = "";
     if (!file) return;
 
     if (file.size > 3 * 1024 * 1024) {
@@ -99,51 +99,47 @@ export function AvatarUploader({
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center">
       <button
         type="button"
         onClick={pickFile}
         disabled={pending}
         aria-label="Bytt profilbilde"
-        className="relative flex h-20 w-20 flex-none overflow-hidden rounded-full bg-primary text-primary-ink transition disabled:opacity-60"
+        className="group relative h-32 w-32 flex-none overflow-hidden rounded-full bg-primary text-primary-ink transition disabled:opacity-60 md:h-36 md:w-36"
       >
         {url ? (
           <Image
             src={url}
             alt={displayName || "Profilbilde"}
-            width={160}
-            height={160}
+            width={288}
+            height={288}
             className="h-full w-full object-cover"
             unoptimized
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-[22px] font-semibold">
+          <span className="flex h-full w-full items-center justify-center font-serif text-[40px] font-medium md:text-[48px]">
             {initials}
           </span>
         )}
+        <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-[12px] font-semibold text-white opacity-0 transition group-hover:opacity-100">
+          Bytt bilde
+        </span>
       </button>
 
-      <div className="flex flex-col gap-1">
+      {url && (
         <button
           type="button"
-          onClick={pickFile}
+          onClick={handleRemove}
           disabled={pending}
-          className="rounded-full border border-line bg-card px-4 py-1.5 text-[13px] font-medium text-ink disabled:opacity-60"
+          className="mt-2 text-[12px] text-ink-3 hover:text-rain disabled:opacity-60"
         >
-          {pending ? "Laster…" : url ? "Bytt bilde" : "Last opp bilde"}
+          Fjern bilde
         </button>
-        {url && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            disabled={pending}
-            className="text-[12px] text-ink-3 hover:text-rain disabled:opacity-60"
-          >
-            Fjern bilde
-          </button>
-        )}
-        {error && <p className="text-[12px] text-rain">{error}</p>}
-      </div>
+      )}
+
+      {error && (
+        <p className="mt-2 text-center text-[12px] text-rain">{error}</p>
+      )}
 
       <input
         ref={inputRef}

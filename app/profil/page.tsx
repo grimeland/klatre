@@ -71,21 +71,16 @@ export default async function ProfilPage() {
     <main className="flex flex-1 flex-col">
       <DetailHeader />
       <div className="px-4 pb-24 pt-8 md:pl-8 md:pr-4 md:pt-12">
-        <h1 className="mb-6 font-serif text-[34px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
-          Profil
-        </h1>
-
-        <ProfileCard
-          userId={user.id}
-          email={user.email ?? ""}
-          displayName={profile?.display_name ?? ""}
-          username={profile?.username ?? ""}
-          bio={profile?.bio ?? ""}
-          avatarUrl={profile?.avatar_url ?? null}
-          tickCount={ticks.length}
-          projectCount={projects.length}
-          savedCount={saved.length}
-        />
+        <div className="pt-6 md:pt-12">
+          <ProfileCard
+            userId={user.id}
+            email={user.email ?? ""}
+            displayName={profile?.display_name ?? ""}
+            username={profile?.username ?? ""}
+            bio={profile?.bio ?? ""}
+            avatarUrl={profile?.avatar_url ?? null}
+          />
+        </div>
 
         <Section
           title="Siste turer"

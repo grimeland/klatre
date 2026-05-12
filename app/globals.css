@@ -2,7 +2,7 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --color-bg: #FFFEF8;
+  --color-bg: #FFFDFC;
   --color-card: #ffffff;
   --color-ink: #1a1a1a;
   --color-ink-2: #4a4a4a;
