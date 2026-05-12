@@ -71,7 +71,6 @@ export function RouteSheet({
   const router = useRouter();
   const [climbedOn, setClimbedOn] = useState(today());
   const [sendStyle, setSendStyle] = useState<SendStyle>("redpoint");
-  const [attempts, setAttempts] = useState("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -103,13 +102,12 @@ export function RouteSheet({
         routeId: route.id,
         climbedOn,
         sendStyle,
-        attempts: attempts.trim() ? Number(attempts.trim()) : null,
+        attempts: null,
         comment: comment.trim() || null,
         cragSlug,
       });
       if (result.ok) {
         setComment("");
-        setAttempts("");
         router.refresh();
       } else {
         setError(result.error);
@@ -254,36 +252,18 @@ export function RouteSheet({
                   })}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <label className="flex flex-col gap-1">
-                    <span className="text-[12px] font-medium text-ink-2">
-                      Dato
-                    </span>
-                    <input
-                      type="date"
-                      value={climbedOn}
-                      onChange={(e) => setClimbedOn(e.target.value)}
-                      max={today()}
-                      className="rounded-2xl border border-line bg-card px-4 py-2.5 text-[14px] text-ink outline-none focus:border-ink"
-                    />
-                  </label>
-                  {sendStyle === "redpoint" && (
-                    <label className="flex flex-col gap-1">
-                      <span className="text-[12px] font-medium text-ink-2">
-                        Forsøk
-                      </span>
-                      <input
-                        type="number"
-                        inputMode="numeric"
-                        min="1"
-                        value={attempts}
-                        onChange={(e) => setAttempts(e.target.value)}
-                        placeholder="3"
-                        className="rounded-2xl border border-line bg-card px-4 py-2.5 text-[14px] text-ink outline-none focus:border-ink"
-                      />
-                    </label>
-                  )}
-                </div>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[12px] font-medium text-ink-2">
+                    Dato
+                  </span>
+                  <input
+                    type="date"
+                    value={climbedOn}
+                    onChange={(e) => setClimbedOn(e.target.value)}
+                    max={today()}
+                    className="rounded-2xl border border-line bg-card px-4 py-2.5 text-[14px] text-ink outline-none focus:border-ink"
+                  />
+                </label>
 
                 <label className="flex flex-col gap-1">
                   <span className="text-[12px] font-medium text-ink-2">
@@ -329,11 +309,6 @@ export function RouteSheet({
                         <div className="min-w-0 flex-1">
                           <p className="text-[13px] font-medium text-ink">
                             {formatDate(t.climbedOn)}
-                            {t.attempts && t.attempts > 1 && (
-                              <span className="ml-2 text-ink-3">
-                                {t.attempts} forsøk
-                              </span>
-                            )}
                           </p>
                           {t.comment && (
                             <p className="mt-0.5 text-[13px] leading-relaxed text-ink-2">
