@@ -55,6 +55,7 @@ export function HomeView({
   const [filterOpen, setFilterOpen] = useState(initialFilterOpen);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [query, setQuery] = useState(initialQuery);
+  const [mapFullscreen, setMapFullscreen] = useState(false);
 
   const filtered = useMemo(() => {
     let xs = filterCrags(crags, filters);
@@ -106,9 +107,11 @@ export function HomeView({
 
       <div className="relative flex flex-1 min-h-0">
         <div
-          className={`no-scrollbar flex-1 overflow-y-auto md:flex-none md:w-3/5 lg:w-1/2 ${
-            view === "map" ? "hidden md:block" : ""
-          }`}
+          className={`no-scrollbar overflow-y-auto transition-[width,opacity,padding] duration-300 ease-in-out ${
+            mapFullscreen
+              ? "md:w-0 md:opacity-0"
+              : "flex-1 md:flex-none md:w-3/5 lg:w-1/2 md:opacity-100"
+          } ${view === "map" ? "hidden md:block" : ""}`}
         >
           <div className="px-4 pb-28 pt-4 md:px-8 md:pb-12">
             <p className="text-[14px] font-semibold text-ink md:text-[15px]">
@@ -127,19 +130,29 @@ export function HomeView({
         </div>
 
         <div
-          className={`${
+          className={`transition-all duration-300 ease-in-out ${
             view === "list"
               ? "hidden md:block"
               : "absolute inset-0 md:relative md:inset-auto"
           } md:flex-1`}
           style={{ zIndex: view === "map" ? 50 : "auto" }}
         >
-          <div className="h-full w-full md:p-4 md:pl-0">
-            <div className="h-full w-full overflow-hidden md:rounded-3xl">
+          <div
+            className={`h-full w-full transition-[padding] duration-300 ease-in-out ${
+              mapFullscreen ? "" : "md:p-4 md:pl-0"
+            }`}
+          >
+            <div
+              className={`h-full w-full overflow-hidden transition-[border-radius] duration-300 ease-in-out ${
+                mapFullscreen ? "" : "md:rounded-3xl"
+              }`}
+            >
               <ExploreMap
                 crags={filtered}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
+                isFullscreen={mapFullscreen}
+                onToggleFullscreen={() => setMapFullscreen((v) => !v)}
               />
             </div>
           </div>

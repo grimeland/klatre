@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { Maximize2, Minus, Navigation, Plus, X } from "lucide-react";
 import type { Crag } from "@/types/crag";
 import { MapPreviewSheet } from "./MapPreviewSheet";
 
@@ -10,6 +11,8 @@ type Props = {
   crags: Crag[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 };
 
 const OSLO: [number, number] = [59.9139, 10.7522];
@@ -49,7 +52,13 @@ function useGeolocation() {
   return { coords, status, request };
 }
 
-export function ExploreMap({ crags, selectedId, onSelect }: Props) {
+export function ExploreMap({
+  crags,
+  selectedId,
+  onSelect,
+  isFullscreen = false,
+  onToggleFullscreen,
+}: Props) {
   const selected = useMemo(
     () => crags.find((c) => c.id === selectedId) ?? null,
     [crags, selectedId],
@@ -78,6 +87,7 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
           opacity={0.85}
         />
         <FitView crags={crags} userCoords={userCoords} />
+        <FullscreenSync isFullscreen={isFullscreen} />
         <ClickToDeselect
           hasSelection={selectedId !== null}
           onDeselect={() => onSelect(null)}
@@ -97,6 +107,12 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
             onClose={() => onSelect(null)}
           />
         )}
+        <MapControls
+          onLocate={requestGeo}
+          geoBusy={geoStatus === "requesting"}
+          isFullscreen={isFullscreen}
+          onToggleFullscreen={onToggleFullscreen}
+        />
       </MapContainer>
 
       {(geoStatus === "denied" || geoStatus === "unavailable") && (
@@ -115,27 +131,79 @@ export function ExploreMap({ crags, selectedId, onSelect }: Props) {
           </button>
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={requestGeo}
-        aria-label={
-          userCoords ? "Sentrer på min posisjon" : "Bruk min posisjon"
-        }
-        className="absolute bottom-5 right-5 z-[400] flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-lg ring-1 ring-black/5 transition active:scale-95 disabled:opacity-60"
-        disabled={geoStatus === "requesting"}
-      >
-        <span
-          aria-hidden
-          className={`text-[18px] leading-none ${
-            geoStatus === "requesting" ? "animate-pulse opacity-60" : ""
-          }`}
-        >
-          📍
-        </span>
-      </button>
     </div>
   );
+}
+
+function MapControls({
+  onLocate,
+  geoBusy,
+  isFullscreen,
+  onToggleFullscreen,
+}: {
+  onLocate: () => void;
+  geoBusy: boolean;
+  isFullscreen: boolean;
+  onToggleFullscreen?: () => void;
+}) {
+  const map = useMap();
+
+  return (
+    <div className="pointer-events-none absolute right-4 top-4 z-[400] flex flex-col items-end gap-3">
+      {onToggleFullscreen && (
+        <button
+          type="button"
+          onClick={onToggleFullscreen}
+          aria-label={isFullscreen ? "Lukk fullskjerm" : "Fullskjerm"}
+          className="pointer-events-auto hidden h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-lg ring-1 ring-black/5 transition active:scale-95 md:flex"
+        >
+          {isFullscreen ? <X size={20} /> : <Maximize2 size={18} />}
+        </button>
+      )}
+
+      <div className="pointer-events-auto flex flex-col overflow-hidden rounded-full bg-white shadow-lg ring-1 ring-black/5">
+        <button
+          type="button"
+          onClick={onLocate}
+          disabled={geoBusy}
+          aria-label="Sentrer på min posisjon"
+          className={`flex h-11 w-11 items-center justify-center text-ink transition active:bg-bg disabled:opacity-60 ${
+            geoBusy ? "animate-pulse" : ""
+          }`}
+        >
+          <Navigation size={18} />
+        </button>
+        <button
+          type="button"
+          onClick={() => map.zoomIn()}
+          aria-label="Zoom inn"
+          className="flex h-11 w-11 items-center justify-center border-t border-line/40 text-ink transition active:bg-bg"
+        >
+          <Plus size={20} />
+        </button>
+        <button
+          type="button"
+          onClick={() => map.zoomOut()}
+          aria-label="Zoom ut"
+          className="flex h-11 w-11 items-center justify-center border-t border-line/40 text-ink transition active:bg-bg"
+        >
+          <Minus size={20} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenSync({ isFullscreen }: { isFullscreen: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    // Leaflet only renders tiles for the visible viewport. When the
+    // container resizes (fullscreen toggle), we need to tell Leaflet to
+    // recalculate after the CSS transition finishes.
+    const t = setTimeout(() => map.invalidateSize(), 320);
+    return () => clearTimeout(t);
+  }, [map, isFullscreen]);
+  return null;
 }
 
 function ClickToDeselect({
