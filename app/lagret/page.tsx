@@ -19,7 +19,7 @@ export default async function LagretPage() {
     return (
       <main className="flex flex-1 flex-col">
         <DetailHeader />
-        <div className="px-4 pb-24 pt-8 md:pl-8 md:pr-4 md:pt-12">
+        <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-8 md:px-10 md:pt-12">
           <h1 className="font-serif text-[34px] leading-[1.05] tracking-tight text-ink md:text-[44px]">
             Lagret
           </h1>

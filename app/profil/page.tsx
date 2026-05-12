@@ -107,7 +107,7 @@ export default async function ProfilPage() {
   return (
     <main className="flex flex-1 flex-col">
       <DetailHeader />
-      <div className="px-4 pb-24 pt-8 md:pl-8 md:pr-4 md:pt-12">
+      <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-8 md:px-10 md:pt-12">
         <div className="pt-6 md:pt-12">
           <ProfileCard
             userId={user.id}
