@@ -230,10 +230,10 @@ export default async function CragDetailPage({ params }: { params: Params }) {
                   <div className="flex items-baseline justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span aria-hidden className="text-[28px] leading-none">
-                        {weather.scoreEmoji}
+                        {weather.daily[0]?.emoji ?? weather.scoreEmoji}
                       </span>
                       <span className="font-serif text-[22px] tracking-tight text-ink">
-                        {weather.scoreLabel}
+                        {weather.daily[0]?.conditionLabel ?? weather.scoreLabel}
                       </span>
                     </div>
                     {weather.daily[0] && (
@@ -245,7 +245,7 @@ export default async function CragDetailPage({ params }: { params: Params }) {
                   <p className="mt-1 text-[13px] text-ink-3">
                     {weather.precipNext24hMm < 0.2
                       ? "Tørt neste døgn"
-                      : `${weather.precipNext24hMm.toFixed(1)} mm forventet`}
+                      : `${weather.precipNext24hMm.toFixed(1)} mm regn neste døgn`}
                   </p>
                 </div>
 
